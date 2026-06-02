@@ -1,11 +1,10 @@
 package ucr.algoritmos.pg06algoritmos.model.graph;
 
+import javafx.beans.binding.StringBinding;
 import ucr.algoritmos.pg06algoritmos.model.Queue.MyQueue;
 import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
-
-import java.util.Arrays;
 
 public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public int n; //tam máximo de la matriz
@@ -16,12 +15,12 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public AdjacencyMatrixGraph(int n){
         if (n <= 0) {
             System.exit(1);
-            this.n = n;
-            this.vertexList = new Vertex[n];
-            this.adjancencyMatrix = (T[][]) new Comparable[n][n];
-            this.counter = 0;
-            initMatrix();
         }
+        this.n = n;
+        this.vertexList = new Vertex[n];
+        this.adjancencyMatrix = (T[][]) new Comparable[n][n];
+        this.counter = 0;
+        initMatrix();
     }
 
     private void initMatrix() {
@@ -49,13 +48,11 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public boolean containsVertex(T element) throws GraphException, ListException {
-        if (isEmpty()) throw new GraphException("Adjacency Matrix is empty");
+        if(isEmpty())throw new GraphException("Adjacency Matrix Graph is Empty");
         for (int i = 0; i < counter; i++) {
-            if(element.equals(this.vertexList[i].data)){
-                return true;
-            }
+            if(element.equals(vertexList[i].data))return true;
         }
-        return false;
+        return false; //No lo encontró
     }
 
     @Override
@@ -73,11 +70,11 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     @Override
     public void addEdge(T a, T b) throws GraphException, ListException {
         if (!containsVertex(a) || !containsVertex(b))
-                throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
+            throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
         adjancencyMatrix[indexOf(a)][indexOf(b)] = (T) Integer.valueOf(1);
-            //grafo no dirigido
-            adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(1);
-        
+        //grafo no dirigido
+        adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(1);
+
     }
 
     private int indexOf(T element) {
@@ -120,31 +117,24 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Adjacency Matrix Graph\n");
-
-        //mostramos todos los vertices
         for (int i = 0; i < counter; i++) {
+            sb.append("\nThe vertex in position [").append(i).append("] is:")
+                    .append(vertexList[i].data + "\n");
 
-            sb.append(" \n The vertex in position [").append(i).append(" ] is:").
-                    append(vertexList[i].data). append("\n");
         }
-
-        //mostramos todos las aristas
+        //mostramos todas las aristas de cada vértice
         for (int i = 0; i < counter; i++) {
             for (int j = 0; j < counter; j++) {
-                if (!adjancencyMatrix[i][j].equals(0)) {
-
-                    sb.append("\n There is edge between this vertexes: ").
-                            append(vertexList[i].data).append("............").
-                            append(vertexList[j].data);
-
-                    //Valida que tenga pesos, si es el caso se muestran
-                    if(!adjancencyMatrix[i][j].equals(1)) {
-                        sb.append("___weight: ").append(adjancencyMatrix[j][i]);
-                    }
+                if(!adjancencyMatrix[i][j].equals(0)){
+                    sb.append("\nThere is edge between the vertexes: ")
+                            .append(vertexList[i].data)
+                            .append("...................").append(vertexList[j].data);
+                    //Valido que tenga pesos, si es el caso que se muestran
+                    if(!adjancencyMatrix[j][i].equals(1))
+                        sb.append("_______weight: ").append(adjancencyMatrix[j][i]);
                 }
             }
         }
-
         return sb.toString();
     }
 
