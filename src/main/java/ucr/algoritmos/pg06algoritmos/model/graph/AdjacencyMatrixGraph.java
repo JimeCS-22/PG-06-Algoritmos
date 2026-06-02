@@ -42,7 +42,6 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         this.adjancencyMatrix = (T[][]) new Comparable[n][n];
         this.counter = 0;
         initMatrix();
-
     }
 
     @Override
@@ -61,8 +60,7 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public boolean containsEdge(T a, T b) throws GraphException, ListException {
-        if (isEmpty())throw new GraphException("Adjacency Matrix Graph is Empty");
-
+        if(isEmpty())throw new GraphException("Adjacency Matrix Graph is Empty");
         return !equals(adjancencyMatrix[indexOf(a)][indexOf(b)],(T)Integer.valueOf(0));
     }
 
@@ -77,13 +75,11 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public void addEdge(T a, T b) throws GraphException, ListException {
         if (!containsVertex(a) || !containsVertex(b))
             throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
-
         if(!containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = (T) Integer.valueOf(1);
             //grafo no dirigido
             adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(1);
         }
-
     }
 
     private int indexOf(T element) {
@@ -95,25 +91,21 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     @Override
     public void addWeight(T a, T b, T weight) throws GraphException, ListException {
         if(!containsVertex(a) || !containsVertex(b)) throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
-
-        if (!containsEdge(a,b)) {
+        if(containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = weight;
             //grafo no dirigido
             adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
         }
-
     }
 
     @Override
     public void addEdgeAndWeight(T a, T b, T weight) throws GraphException, ListException {
         if(!containsVertex(a) || !containsVertex(b)) throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
-
-        if (!containsEdge(a,b)) {
+        if(!containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = weight;
             //grafo no dirigido
             adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
         }
-
     }
 
     @Override
