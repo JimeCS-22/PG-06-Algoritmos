@@ -1,6 +1,6 @@
 package ucr.algoritmos.pg06algoritmos.model.Tree;
 
-import ucr.algoritmos.pg05algoritmos.model.Tree.Tree;
+import ucr.algoritmos.pg06algoritmos.model.Tree.Tree;
 
 public class BTreeNode<T> {
 

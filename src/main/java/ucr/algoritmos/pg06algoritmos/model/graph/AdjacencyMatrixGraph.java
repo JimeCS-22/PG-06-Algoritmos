@@ -5,6 +5,8 @@ import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 
+import java.util.Arrays;
+
 public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public int n; //tam máximo de la matriz
     public Vertex<T>[] vertexList;//arreglo estático de objetos tipo Vertex
@@ -47,6 +49,12 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public boolean containsVertex(T element) throws GraphException, ListException {
+        if (isEmpty()) throw new GraphException("Adjacency Matrix is empty");
+        for (int i = 0; i < counter; i++) {
+            if(element.equals(this.vertexList[i].data)){
+                return true;
+            }
+        }
         return false;
     }
 
@@ -108,6 +116,37 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         return "";
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Adjacency Matrix Graph\n");
+
+        //mostramos todos los vertices
+        for (int i = 0; i < counter; i++) {
+
+            sb.append(" \n The vertex in position [").append(i).append(" ] is:").
+                    append(vertexList[i].data). append("\n");
+        }
+
+        //mostramos todos las aristas
+        for (int i = 0; i < counter; i++) {
+            for (int j = 0; j < counter; j++) {
+                if (!adjancencyMatrix[i][j].equals(0)) {
+
+                    sb.append("\n There is edge between this vertexes: ").
+                            append(vertexList[i].data).append("............").
+                            append(vertexList[j].data);
+
+                    //Valida que tenga pesos, si es el caso se muestran
+                    if(!adjancencyMatrix[i][j].equals(1)) {
+                        sb.append("___weight: ").append(adjancencyMatrix[j][i]);
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
 
     /**Metodos de ayuda**/
     public boolean equals(T a, T b)  {
