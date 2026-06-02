@@ -33,12 +33,15 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public int size() throws ListException {
-        return 0;
+        return counter;
     }
 
     @Override
     public void clear() {
-
+        this.vertexList = new Vertex[n];
+        this.adjancencyMatrix = (T[][]) new Comparable[n][n];
+        this.counter = 0;
+        initMatrix();
     }
 
     @Override
@@ -57,7 +60,8 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public boolean containsEdge(T a, T b) throws GraphException, ListException {
-        return false;
+        if(isEmpty())throw new GraphException("Adjacency Matrix Graph is Empty");
+        return !equals(adjancencyMatrix[indexOf(a)][indexOf(b)],(T)Integer.valueOf(0));
     }
 
     @Override
