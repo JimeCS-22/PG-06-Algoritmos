@@ -1,4 +1,4 @@
-package ucr.algoritmos.pg05algoritmos.model;
+package ucr.algoritmos.pg06algoritmos.model;
 
 public class Node<T> {
 
