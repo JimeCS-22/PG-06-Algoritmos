@@ -1,6 +1,6 @@
 package ucr.algoritmos.pg06algoritmos.model.stack;
 
-import ucr.algoritmos.pg05algoritmos.model.Node;
+import ucr.algoritmos.pg06algoritmos.model.Node;
 
 public class LinkedStack<T> implements MyStack<T> {
     private Node<T> top; //es un apuntador

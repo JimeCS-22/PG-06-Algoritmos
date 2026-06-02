@@ -70,4 +70,14 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public String bfs() throws GraphException, QueueException, ListException {
         return "";
     }
+
+    /**Metodos de ayuda**/
+    public boolean equals(T a, T b)  {
+        return a==null ? b==null : a.equals(b);
+    }
+
+    //metodo generico de comparacion
+    public int compareElement(T a, T b) {
+        return a.compareTo(b);
+    }
 }
