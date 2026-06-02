@@ -140,7 +140,7 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
                             .append("...................").append(vertexList[j].data);
                     //Valido que tenga pesos, si es el caso que se muestran
                     if(!adjancencyMatrix[j][i].equals(1))
-                        sb.append("_______weight: ").append(adjancencyMatrix[j][i]);
+                        sb.append(" .weight: ").append(adjancencyMatrix[j][i]);
                 }
             }
         }
