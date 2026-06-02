@@ -6,6 +6,21 @@ import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 
 public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
+
+    public int n;
+    public Vertex<T>[] vertexList; //arreglo estático de objetos tipos Vertex
+    private T[][] adjancencyMatrixGraph;//arreglo multidimensional tipo matrix
+    public int counter; //Contador de vertices agregados
+
+    public AdjacencyMatrixGraph(int n) {
+        if (n <= 0) System.exit(1);
+
+        this .n = n;
+        this.vertexList = new Vertex[n];
+        this.adjancencyMatrixGraph = (T[][]) new Comparable[n][n];
+        this.counter = 0;
+    }
+
     @Override
     public int size() throws ListException {
         return 0;
