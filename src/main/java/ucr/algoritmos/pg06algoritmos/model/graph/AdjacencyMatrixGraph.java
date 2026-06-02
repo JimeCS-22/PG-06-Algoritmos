@@ -89,7 +89,11 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     }
 
     @Override
-    public void addEdgeAndWeight(T a, T b, T c) throws GraphException, ListException {
+    public void addEdgeAndWeight(T a, T b, T weight) throws GraphException, ListException {
+        if(!containsVertex(a) || !containsVertex(b)) throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
+        adjancencyMatrix[indexOf(a)][indexOf(b)] = weight;
+        //grafo no dirigido
+        adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
 
     }
 
