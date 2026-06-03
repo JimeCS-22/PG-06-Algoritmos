@@ -11,10 +11,11 @@ import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public int n; //tam máximo de la matriz
     public Vertex<T>[] vertexList;//arreglo estático de objetos tipo Vertex
-    private T[][] adjancencyMatrix; //areglo multidimensional tipo matriz
+    private T[][] adjancencyMatrix; //arreglo multidimensional tipo matriz
     public int counter;
+    public final boolean directed;
 
-    public AdjacencyMatrixGraph(int n){
+    public AdjacencyMatrixGraph(int n, boolean directed){
         if (n <= 0) {
             System.exit(1);
         }
@@ -22,6 +23,7 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         this.vertexList = new Vertex[n];
         this.adjancencyMatrix = (T[][]) new Comparable[n][n];
         this.counter = 0;
+        this.directed = directed;
         initMatrix();
     }
 
@@ -80,7 +82,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         if(!containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = (T) Integer.valueOf(1);
             //grafo no dirigido
-            adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(1);
+            if (!directed) {
+                adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(1);
+            }
         }
     }
 
@@ -96,7 +100,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         if(containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = weight;
             //grafo no dirigido
-            adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
+            if (!directed) {
+                adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
+            }
         }
     }
 
@@ -106,7 +112,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         if(!containsEdge(a,b)) {
             adjancencyMatrix[indexOf(a)][indexOf(b)] = weight;
             //grafo no dirigido
-            adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
+            if (!directed) {
+                adjancencyMatrix[indexOf(b)][indexOf(a)] = weight;
+            }
         }
     }
 
@@ -227,6 +235,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Adjacency Matrix Graph\n");
+        String graphType = directed ? "Directed":"Undirected";
+        sb.append("****** Graph Type: ").append(graphType).append("\n");
+        //mostramos los vértices
         for (int i = 0; i < counter; i++) {
             sb.append("\nThe vertex in position [").append(i).append("] is:")
                     .append(vertexList[i].data + "\n");
