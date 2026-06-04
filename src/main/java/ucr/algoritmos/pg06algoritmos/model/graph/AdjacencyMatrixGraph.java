@@ -1,11 +1,9 @@
 package ucr.algoritmos.pg06algoritmos.model.graph;
 
-import javafx.beans.binding.StringBinding;
-import ucr.algoritmos.pg06algoritmos.model.Queue.ArrayQueue;
 import ucr.algoritmos.pg06algoritmos.model.Queue.LinkedQueue;
-import ucr.algoritmos.pg06algoritmos.model.Queue.MyQueue;
 import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
+import ucr.algoritmos.pg06algoritmos.model.stack.LinkedStack;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 
 public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
@@ -14,6 +12,13 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     private T[][] adjancencyMatrix; //arreglo multidimensional tipo matriz
     public int counter;
     public final boolean directed;
+
+    //Atributos para los recorridos
+    public LinkedStack<Integer> stack;
+    public LinkedQueue<Integer> queue;
+
+
+
 
     public AdjacencyMatrixGraph(int n, boolean directed){
         if (n <= 0) {
@@ -24,6 +29,8 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         this.adjancencyMatrix = (T[][]) new Comparable[n][n];
         this.counter = 0;
         this.directed = directed;
+        this.stack = new LinkedStack<>();
+        this.queue = new LinkedQueue<Integer>();
         initMatrix();
     }
 
@@ -152,27 +159,24 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
                adjancencyMatrix[i][counter] = (T)Integer.valueOf(0);
                adjancencyMatrix[counter][i] = (T)Integer.valueOf(0);
            }
-
-
-
         }
-
-
-
     }
 
     @Override
     public void removeEdge(T a, T b) throws GraphException, ListException {
-        if (isEmpty()) throw new GraphException("Adjacency Matrix Graph is Empty");
+        if (!containsVertex(a) || !containsVertex(b))
+            throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
 
-        if (!containsVertex(a) || !containsVertex(b)) throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
+        if (!containsEdge(a,b))
+            throw new GraphException("Adjancency Matrix Graph Not Contains Edge");
 
-        if (!containsEdge(a,b)) {
+        int i = indexOf(a);//Obtenemos la pos del vertice "a"
+        int j = indexOf(b);//Obtenemos el pos del vertice "b"
 
-            //Grafo dirigido
-            adjancencyMatrix[indexOf(a)][indexOf(b)] = (T) Integer.valueOf(0);
-            // Grafo no dirigido
-            adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(0);
+        if (i!=-1 && j!= -1){//Si los dos vértices existen
+            adjancencyMatrix[i][j] = (T) Integer.valueOf(0);
+            if(!directed) adjancencyMatrix[j][i] = (T) Integer.valueOf(0);
+
         }
 
     }
@@ -192,67 +196,63 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public String dfs() throws GraphException, StackException, ListException {
-        if(isEmpty())
-            throw new GraphException("Adjacency Matrix Graph is Empty");
-
-        StringBuilder sb = new StringBuilder();
-        boolean[] visited = new boolean[counter];
-
-        for(int i = 0; i < counter; i++) {
-            if(!visited[i]) {
-                dfsProceso(i, visited, sb);
+        setVisited(false);//marca todos los vertices como no vistados
+        // inicia en el vertice 0
+        String info =vertexList[0].data+", ";
+        vertexList[0].setVisited(true); // lo marca
+        stack.clear();
+        stack.push(0); //lo apila
+        while( !stack.isEmpty() ){
+            // obtiene un vertice adyacente no visitado,
+            //el que esta en el tope de la pila
+            int index = adjacentVertexNotVisited((int) stack.top());
+            if(index==-1) // no lo encontro
+                stack.pop();
+            else{
+                vertexList[index].setVisited(true); // lo marca
+                info+=vertexList[index].data+", "; //lo muestra
+                stack.push(index); //inserta la posicion
             }
         }
-
-        return sb.toString().trim();
+        return info;
     }
-
-    private void dfsProceso(int index, boolean[] visited, StringBuilder sb) {
-        visited[index] = true;
-        sb.append(vertexList[index].data).append(" ");
-
-        for(int j = 0; j < counter; j++) {
-            if(!visited[j] && adjancencyMatrix[index][j] != null
-                    && !adjancencyMatrix[index][j].equals((T)Integer.valueOf(0))) {
-                dfsProceso(j, visited, sb);
-            }
-        }
-    }
-
 
     @Override
-    public String bfs() throws GraphException, ListException {
-        if(isEmpty())
-            throw new GraphException("Adjacency Matrix Graph is Empty");
-
-        StringBuilder sb = new StringBuilder();
-        boolean[] visited = new boolean[counter];
-        int[] queue = new int[counter];
-        int front = 0, rear = 0;
-
-        for(int i = 0; i < counter; i++) {
-            if(!visited[i]) {
-                queue[rear++] = i;
-                visited[i] = true;
-
-                while(front < rear) {
-                    int current = queue[front++];
-                    sb.append(vertexList[current].data).append(" ");
-
-                    for(int j = 0; j < counter; j++) {
-                        if(!visited[j] && adjancencyMatrix[current][j] != null
-                                && !adjancencyMatrix[current][j].equals((T)Integer.valueOf(0))) {
-                            queue[rear++] = j;
-                            visited[j] = true;
-                        }
-                    }
-                }
-                front = 0;
-                rear = 0;
+    public String bfs() throws GraphException, QueueException, ListException {
+        setVisited(false);//marca todos los vertices como no visitados
+        // inicia en el vertice 0
+        String info =vertexList[0].data+", ";
+        vertexList[0].setVisited(true); // lo marca
+        queue.clear();
+        queue.enQueue(0); // encola el elemento
+        int v2;
+        while(!queue.isEmpty()){
+            int v1 = (int) queue.deQueue(); // remueve el vertice de la cola
+            // hasta que no tenga vecinos sin visitar
+            while((v2=adjacentVertexNotVisited(v1)) != -1 ){
+                // obtiene uno
+                vertexList[v2].setVisited(true); // lo marca
+                info+=vertexList[v2].data+", "; //lo muestra
+                queue.enQueue(v2); // lo encola
             }
         }
+        return info;
+    }
 
-        return sb.toString().trim();
+    //setteamos el atributo visitado del vertice respectivo
+    private void setVisited(boolean value) {
+        for (int i = 0; i < counter; i++) {
+            vertexList[i].setVisited(value); //value==true o false
+        }//for
+    }
+
+    private int adjacentVertexNotVisited(int index) {
+        for (int i = 0; i < counter; i++) {
+            if(!adjancencyMatrix[index][i].equals(0)
+                    && !vertexList[i].isVisited())
+                return i;//retorna la posicion del vertice adyacente no visitado
+        }//for i
+        return -1;
     }
 
     @Override

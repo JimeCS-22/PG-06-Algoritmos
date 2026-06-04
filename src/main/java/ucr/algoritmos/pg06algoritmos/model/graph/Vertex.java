@@ -11,4 +11,12 @@ public class Vertex<T> {
         this.data = data;
         this.headNode = null;
     }
+
+    public void setVisited(boolean value) {
+        this.visited = value;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
 }

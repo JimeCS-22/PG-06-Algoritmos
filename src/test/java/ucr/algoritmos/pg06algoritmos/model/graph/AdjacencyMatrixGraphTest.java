@@ -16,7 +16,7 @@ class AdjacencyMatrixGraphTest {
     public void testAdjacencyMatrixGraph() {
         AdjacencyMatrixGraph<Integer> graph = new AdjacencyMatrixGraph<>(10,false); //es no dirigido
         try {
-            for (int i = 0; i <= 5; i++)
+            for (int i = 1; i <= 5; i++)
                 graph.addVertex(i);
 
             //agregamos aristas con pesos
@@ -32,14 +32,9 @@ class AdjacencyMatrixGraphTest {
 
             System.out.println(graph);
 
-
-            // Prueba de removeEdge
-            System.out.println("\n=== PRUEBA removeEdge ===");
-            System.out.println("Eliminando arista entre 2 y 5...");
-            graph.removeEdge(2, 5);
-            System.out.println("¿Existe arista entre 2 y 5? " + graph.containsEdge(2, 5));
-            System.out.println("\nGrafo después de eliminar arista:");
-            System.out.println(graph);
+            //probamos los recorridos
+            System.out.println("DFS: " + graph.dfs());
+            System.out.println("BFS: " + graph.bfs() );
 
             // Prueba de removeVertex
             System.out.println("\n=== PRUEBA removeVertex ===");
@@ -50,6 +45,17 @@ class AdjacencyMatrixGraphTest {
             System.out.println("Eliminando vértice 3...");
             graph.removeVertex(3);
 
+            graph.addVertex(6);
+            graph.addVertex(7);
+            graph.addEdgeAndWeight(4,5,new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(6,7,new Random().nextInt(5, 30));
+
+            // Prueba de removeEdge
+            System.out.println("\n=== PRUEBA removeEdge ===");
+            System.out.println("Eliminando arista entre 4 y 5...");
+            graph.removeEdge(4, 5);
+            System.out.println("¿Existe arista entre 4 y 5? " + graph.containsEdge(4, 5));
+            System.out.println("\nGrafo después de eliminar arista:");
             System.out.println(graph);
 
             System.out.println("==Prueba==");
@@ -59,8 +65,13 @@ class AdjacencyMatrixGraphTest {
             System.out.println(graph.printMatrix());
             System.out.println(graph);
 
+            //probamos los recorridos
+            System.out.println("DFS: " + graph.dfs());
+            System.out.println("BFS: " + graph.bfs() );
 
-        } catch (ListException e) {
+        } catch (ListException | StackException e) {
+            throw new RuntimeException(e);
+        } catch (QueueException e) {
             throw new RuntimeException(e);
         }
     }
