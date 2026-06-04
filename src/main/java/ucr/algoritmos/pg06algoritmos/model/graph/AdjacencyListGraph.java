@@ -1,5 +1,6 @@
 package ucr.algoritmos.pg06algoritmos.model.graph;
 
+import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
@@ -17,7 +18,25 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
 
     @Override
     public void addEdge(T a, T b) throws GraphException, ListException {
-        super.addEdge(a, b);
+        if (!containsVertex(a) || containsVertex(b)) throw new GraphException("Adjacency list graph not contains vertex");
+
+        if(!containsEdge(a, b)){
+            Vertex<T> vertexA = getVertex(a);
+            vertexA.headNode = addNeighbor(vertexA.headNode, b, null);
+
+            if (!directed){
+                Vertex<T> vertexB = getVertex(b);
+                vertexB.headNode = addNeighbor(vertexB.headNode, a, null);
+            }
+        }
+    }
+
+    private Node<T> addNeighbor(Node<T>  headNote, T element, Object weight){
+
+        Node<T> node = new Node<>(element, weight);
+
+
+
     }
 
     @Override

@@ -3,9 +3,18 @@ package ucr.algoritmos.pg06algoritmos.model;
 public class Node<T> {
 
     public T data;
+    public Object weight;
     public Node<T> next; //apuntador al nodo siguiente
     public Node<T> prev;//apuntador al nodo siguiente
     public Integer priority;// 1-Alta,2-media y 3-baja
+    public Node<T> neighbor;
+
+    //Constructor sobrecargado No.3 utilizando con grafos de listas
+    public Node(T element, Object weight) {
+        this.data = data;
+        this.weight = data;
+        this.neighbor = null;
+    }
 
     public Node(T data, Node<T> next) {
         this.data = data;
