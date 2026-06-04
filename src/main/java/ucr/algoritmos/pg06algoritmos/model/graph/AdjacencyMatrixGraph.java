@@ -120,33 +120,42 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
 
     @Override
     public void removeVertex(T element) throws GraphException, ListException {
-        if(isEmpty()) throw new GraphException("Adjacency Matrix Graph is Empty");
+        if(isEmpty()) throw new GraphException("Adjacency Matrix Graph is Empty");//ver si si
 
-        int index = indexOf(element);
-        if(index != -1) throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
+        int index = indexOf(element);//devuelve el indice del vétice a eliminar
+        //si el vértice existe en la lista de vértices
+        if(index != -1) {
+            //Se desplaza los vértices hacia la izquierda
+            for (int i = index; i < counter-1 ; i++) {
+                vertexList[i] = vertexList[i + 1];
 
-        //Se desplaza los vértices hacia la izquierda
-        for (int i = index; i < counter; i++) {
-            vertexList[i] = vertexList[i+1];
-        }
-
-        //Se desplaza las filas en la matriz de adyacencia
-        for (int i = index; i < counter; i++) {
-            for (int j = 0; j < counter; j++) {
-                adjancencyMatrix[i][j] = adjancencyMatrix[i+1][j];
+                //ahora hacemos lo mismo en la matriz con las filas, columnas
+                //es decir, eliminamos las aristas
+                //primero movemos todas las filas, una posición hacia arriba
+                for (int j = 0; j < counter; j++) {
+                    adjancencyMatrix[i][j] = adjancencyMatrix[i][j+1];
+                }
             }
-        }
-
-        //Desplaza columnas en la matriz de adyacencia
-        for (int i = 0; i < counter; i++) {
-            for (int j = index; j < counter; j++) {
-                adjancencyMatrix[i][j] = adjancencyMatrix[i][j+1];
+            //luego movemos todas las columnas una pos a la izq
+            for (int i = 0; i < counter; i++) {
+                for (int j = index; j < counter-1; j++) {
+                    adjancencyMatrix[i][j] = adjancencyMatrix[i][j+1];
+                }
             }
+            //al final se debe decrementar el contador de vértices existente
+            //eliminamos los datos "sucios" de la lista de vétices y la matriz
+            vertexList[counter] = null;
+           for (int i = 0; i <= counter; i++) {
+               //cambia las filas y la col es la ult(columna "sucia")
+               adjancencyMatrix[i][counter] = (T)Integer.valueOf(0);
+               adjancencyMatrix[counter][i] = (T)Integer.valueOf(0);
+           }
+
+
+            counter--;
         }
 
-        vertexList[counter - 1] = null; // Limpiar la última posición
 
-        counter--;
 
     }
 

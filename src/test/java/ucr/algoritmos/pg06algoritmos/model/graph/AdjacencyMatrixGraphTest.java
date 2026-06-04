@@ -63,8 +63,8 @@ class AdjacencyMatrixGraphTest {
 
             // Prueba de removeVertex
             System.out.println("\n=== PRUEBA removeVertex ===");
-            System.out.println("Eliminando vértice 3...");
-            graph.removeVertex(3);
+            System.out.println("Eliminando vértice 1...");
+            graph.removeVertex(1);
             System.out.println("Tamaño del grafo después de eliminar: " + graph.size());
             System.out.println("\nGrafo después de eliminar vértice:");
             System.out.println(graph);
