@@ -5,6 +5,7 @@ import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 
+import java.io.PrintStream;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,27 +32,6 @@ class AdjacencyMatrixGraphTest {
 
             System.out.println(graph);
 
-            // Prueba de DFS
-            System.out.println("\n=== PRUEBA DFS ===");
-            System.out.println("Recorrido DFS: " + graph.dfs());
-
-            // Prueba de BFS
-            System.out.println("\n=== PRUEBA BFS ===");
-            System.out.println("Recorrido BFS: " + graph.bfs());
-
-            // Prueba de containsVertex
-            System.out.println("\n=== PRUEBA containsVertex ===");
-            System.out.println("¿Contiene vértice 3? " + graph.containsVertex(3));
-            System.out.println("¿Contiene vértice 10? " + graph.containsVertex(10));
-
-            // Prueba de containsEdge
-            System.out.println("\n=== PRUEBA containsEdge ===");
-            System.out.println("¿Existe arista entre 1 y 2? " + graph.containsEdge(1, 2));
-            System.out.println("¿Existe arista entre 1 y 5? " + graph.containsEdge(1, 5));
-
-            // Prueba de size
-            System.out.println("\n=== PRUEBA size ===");
-            System.out.println("Tamaño del grafo: " + graph.size());
 
             // Prueba de removeEdge
             System.out.println("\n=== PRUEBA removeEdge ===");
@@ -65,19 +45,22 @@ class AdjacencyMatrixGraphTest {
             System.out.println("\n=== PRUEBA removeVertex ===");
             System.out.println("Eliminando vértice 1...");
             graph.removeVertex(1);
-            System.out.println("Tamaño del grafo después de eliminar: " + graph.size());
-            System.out.println("\nGrafo después de eliminar vértice:");
+            System.out.println("Eliminando vértice 2...");
+            graph.removeVertex(2);
+            System.out.println("Eliminando vértice 3...");
+            graph.removeVertex(3);
+
             System.out.println(graph);
 
-            // Prueba de DFS después de cambios
-            System.out.println("\n=== PRUEBA DFS (después de cambios) ===");
-            System.out.println("Recorrido DFS: " + graph.dfs());
+            System.out.println("==Prueba==");
+            graph.addVertex(6); graph.addVertex(7);
+            graph.addEdgeAndWeight(4,7,new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(5,6,new Random().nextInt(5, 30));
+            System.out.println(graph.printMatrix());
+            System.out.println(graph);
 
-            // Prueba de BFS después de cambios
-            System.out.println("\n=== PRUEBA BFS (después de cambios) ===");
-            System.out.println("Recorrido BFS: " + graph.bfs());
 
-        } catch (ListException | StackException e) {
+        } catch (ListException e) {
             throw new RuntimeException(e);
         }
     }

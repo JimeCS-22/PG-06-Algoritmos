@@ -145,6 +145,8 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
             //al final se debe decrementar el contador de vértices existente
             //eliminamos los datos "sucios" de la lista de vétices y la matriz
             vertexList[counter] = null;
+            counter--;
+
            for (int i = 0; i <= counter; i++) {
                //cambia las filas y la col es la ult(columna "sucia")
                adjancencyMatrix[i][counter] = (T)Integer.valueOf(0);
@@ -152,7 +154,7 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
            }
 
 
-            counter--;
+
         }
 
 
@@ -173,6 +175,19 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
             adjancencyMatrix[indexOf(b)][indexOf(a)] = (T) Integer.valueOf(0);
         }
 
+    }
+
+    public String printMatrix() {
+        String result = "";
+        for (int i = 0; i < counter; i++) {
+            for (int j = 0; j < counter; j++) {
+                result += adjancencyMatrix[i][j] + " ";
+            }
+
+            result += "\n";
+        }
+
+        return result;
     }
 
     @Override
