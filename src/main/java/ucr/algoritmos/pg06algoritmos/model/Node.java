@@ -12,7 +12,7 @@ public class Node<T> {
     //Constructor sobrecargado No.3 utilizando con grafos de listas
     public Node(T element, Object weight) {
         this.data = data;
-        this.weight = data;
+        this.weight = weight;
         this.neighbor = null;
     }
 
