@@ -32,9 +32,26 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
     @Override
     public boolean containsEdge(T a, T b) throws GraphException, ListException {
-        return false;
-    }
+        Node<T> nodeA = getNode(a);
+        Node<T> nodeB = null;
 
+        if (!directed) {
+            nodeB = getNode(b);
+
+        }
+        return !directed ? getNodeNeighbor(nodeA, b) != null && getNodeNeighbor(nodeB,a) != null
+                   : getNodeNeighbor(nodeA,b)!= null;
+
+    }
+    private Node<T> getNodeNeighbor(Node<T> headNode, T element) {
+        if(headNode.neighbor==null) return null;
+        Node<T> aux = headNode.neighbor;
+        while(aux!=null){
+            if(aux.data.compareTo(element)==0) return aux;
+            aux = aux.neighbor; //movemos aux al sgte nodo vecino
+        }
+        return null; //si llega aquí, no encontró el nodo
+    }
     @Override
     public void addVertex(T element) throws GraphException, ListException {
         if (isEmpty()) add(element); //si la lista enlazada está vacia agregue el elemento
