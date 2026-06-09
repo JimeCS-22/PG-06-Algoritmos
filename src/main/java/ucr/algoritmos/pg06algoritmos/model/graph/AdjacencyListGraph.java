@@ -133,7 +133,23 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
 
     @Override
     public void removeEdge(T a, T b) throws GraphException, ListException {
-        super.removeEdge(a, b);
+        if (!containsVertex(a) || !containsVertex(b))
+            throw new GraphException("Adjancency Matrix Graph Not Contains Vertex");
+
+        if (!containsEdge(a,b))
+            throw new GraphException("Adjancency Matrix Graph Not Contains Edge");
+
+        if (containsEdge(a,b)) {
+
+            Vertex<T> vertexA = getVertex(a);
+            vertexA.headNode = removeNeighbor(vertexA.headNode, b);
+
+            if (!directed) {
+                Vertex<T> vertexB = getVertex(b);
+                vertexB.headNode = removeNeighbor(vertexB.headNode, a);
+            }
+
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ class AdjacencyListGraphTest {
             graph.addEdgeAndWeight(4, 5, new Random().nextInt(5, 30));
 
             System.out.println(graph);
+
             // Prueba de removeVertex
             System.out.println("\n=== PRUEBA removeVertex ===");
             System.out.println("Eliminando vértice 1...");
@@ -38,6 +39,18 @@ class AdjacencyListGraphTest {
             graph.removeVertex(2);
             System.out.println("Eliminando vértice 3...");
             graph.removeVertex(3);
+
+            graph.addVertex(6);
+            graph.addVertex(7);
+            graph.addEdgeAndWeight(4,5,new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(6,7,new Random().nextInt(5, 30));
+
+            // Prueba de removeEdge
+            System.out.println("\n=== PRUEBA removeEdge ===");
+            System.out.println("Eliminando arista entre 4 y 5...");
+            graph.removeEdge(4, 5);
+            System.out.println("\nGrafo después de eliminar arista:");
+            System.out.println(graph);
 
 
             //TODO fix this to study
