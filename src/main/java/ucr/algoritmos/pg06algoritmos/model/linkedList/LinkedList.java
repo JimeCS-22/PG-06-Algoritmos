@@ -315,7 +315,7 @@ public class LinkedList<T> implements List<T> {
         return null;
     }
 
-    private Node<T> getNode(T element) throws ListException {
+    public Node<T> getNode(T element) throws ListException {
         if (isEmpty())
             throw new ListException("Linked List is empty");
         Node<T> aux = head;
@@ -326,7 +326,7 @@ public class LinkedList<T> implements List<T> {
         return null;
     }
 
-    private Node<T> getNodeByIndex(int index) throws ListException {
+    public Node<T> getNodeByIndex(int index) throws ListException {
         if (isEmpty())
             throw new ListException("Linked List is empty");
         Node<T> aux = head;
