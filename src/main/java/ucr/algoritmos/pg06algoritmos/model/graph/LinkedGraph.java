@@ -27,7 +27,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
     @Override
     public boolean containsVertex(T element) throws GraphException, ListException {
-        return false;
+        return contains(element);
     }
 
     @Override
@@ -88,23 +88,79 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
     @Override
     public void addWeight(T a, T b, T weight) throws GraphException, ListException {
-
+        if (!containsEdge(a,b)) {
+            Node<T>nodeA = getNode(a);
+            //recuperamos la lista de vecinos del nodo A  para settear el peso
+            getNodeNeighbor(nodeA,b).weight = weight; //null  para el peso
+            if(!directed){
+                Node<T>nodeB = getNode(b);
+                getNodeNeighbor(nodeB,a).weight = weight; //null para el peso
+            }
+        }
     }
 
     @Override
-    public void addEdgeAndWeight(T a, T b, T c) throws GraphException, ListException {
-
+    public void addEdgeAndWeight(T a, T b, T weight) throws GraphException, ListException {
+        if(!containsVertex(a) || !containsVertex(b))
+            throw new GraphException("Linked Graph Not Contains Vertex");
+        if(!containsEdge(a, b)) {
+            Node<T> nodeA = getNode(a);
+           addNeighbor(nodeA, b, weight);
+            if(!directed) {
+                Node<T> nodeB = getNode(b);
+                // a partir del node B contruya
+                addNeighbor(nodeB, a, weight);
+            }
+        }
     }
 
     @Override
     public void removeVertex(T element) throws GraphException, ListException {
-
+        if(!containsVertex(element))
+            throw new GraphException("Linked Graph Not Contains Vertex");
+        remove(element); //eliminamos el vertice del grafo
+        //buscamos el rastro del vértice en las listas enlazadas de vecinos de los otros vértices
+        int len = size();
+        for (int i = 0; i < len; i++) {
+            Node<T> node = getNodeByIndex(i);
+            removeNeighbor(node, element);
+        }
+    }
+    private void removeNeighbor(Node<T> headNode, T element) throws ListException {
+        if(headNode == null)throw new ListException("Linked List in Graph is Empty");
+        //Caso 1: el elemento a suprimir es el primero
+        if (equals(headNode.neighbor.data,element)) {
+            headNode = headNode.neighbor.neighbor; //queda apuntando al sgte nodo vecino
+            //caso 2.El elemento a suprimir puede estar en medio o al final de la lista
+        }else{
+            Node<T> prev = headNode;
+            while(prev.neighbor != null){
+                if (equals(prev.neighbor.data, element)) {
+                    Node<T>removed = prev.neighbor;//es el nodo a eliminar
+                    //desenlaza el nodo
+                    prev.neighbor = removed.neighbor;
+                }
+                prev = prev.neighbor; //lo movemos al sgte vecino
+            }
+        }
     }
 
     @Override
     public void removeEdge(T a, T b) throws GraphException, ListException {
-
+        if(!containsVertex(a) || !containsVertex(b))
+            throw new GraphException("Linked Graph Not Contains Vertex");
+        if(!containsEdge(a, b)) {
+            throw new GraphException("Linked Graph Not Contains Edge");
+        }
+        Node<T> nodeA = getNode(a);
+        removeNeighbor(nodeA,b);
+        if (!directed ) {
+            Node<T> nodeB = getNode(b);
+            removeNeighbor(nodeB,a);
+        }
     }
+
+    //TODO
 
     @Override
     public String dfs() throws GraphException, StackException, ListException {
@@ -128,7 +184,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
         //mostramos todos los vértices
         try {
             int len = size(); //llamamos al método de la lista enlazada
-            for (int i = 0; i <= len; i++) {
+            for (int i = 1; i <= len; i++) {
 
                 sb.append("\n(").append(i).append(")-------Vertex [").append(getNodeByIndex(i).data).append("]");
                 Node<T> aux = getNodeByIndex(i).neighbor;
@@ -144,5 +200,13 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
         return super.toString() + sb;
     }
 
+    /**Metodos de ayuda**/
+    public boolean equals(T a, T b)  {
+        return a==null ? b==null : a.equals(b);
+    }
 
+    //metodo generico de comparacion
+    public int compareElement(T a, T b) {
+        return a.compareTo(b);
+    }
 }
