@@ -29,6 +29,17 @@ class AdjacencyListGraphTest {
             graph.addEdgeAndWeight(3, 4, new Random().nextInt(5, 30));
             graph.addEdgeAndWeight(4, 5, new Random().nextInt(5, 30));
 
+            System.out.println(graph);
+            // Prueba de removeVertex
+            System.out.println("\n=== PRUEBA removeVertex ===");
+            System.out.println("Eliminando vértice 1...");
+            graph.removeVertex(1);
+            System.out.println("Eliminando vértice 2...");
+            graph.removeVertex(2);
+            System.out.println("Eliminando vértice 3...");
+            graph.removeVertex(3);
+
+
             //TODO fix this to study
             System.out.println("BFS Transversal Tour: " + graph.bfs());
             System.out.println("DFS Transversal Tour: " + graph.dfs());
