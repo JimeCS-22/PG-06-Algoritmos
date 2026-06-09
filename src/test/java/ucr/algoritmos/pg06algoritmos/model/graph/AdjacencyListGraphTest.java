@@ -1,7 +1,9 @@
 package ucr.algoritmos.pg06algoritmos.model.graph;
 
 import org.junit.jupiter.api.Test;
+import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
+import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
 
 import java.util.Random;
 
@@ -26,13 +28,17 @@ class AdjacencyListGraphTest {
             graph.addEdgeAndWeight(2, 5, new Random().nextInt(5, 30));
             graph.addEdgeAndWeight(3, 4, new Random().nextInt(5, 30));
             graph.addEdgeAndWeight(4, 5, new Random().nextInt(5, 30));
+
+            //TODO fix this to study
+            System.out.println("BFS Transversal Tour: " + graph.bfs());
+            System.out.println("DFS Transversal Tour: " + graph.dfs());
             System.out.println(graph);
 
-
-
-
-            System.out.println(graph);
         } catch (ListException e) {
+            throw new RuntimeException(e);
+        } catch (QueueException e) {
+            throw new RuntimeException(e);
+        } catch (StackException e) {
             throw new RuntimeException(e);
         }
 

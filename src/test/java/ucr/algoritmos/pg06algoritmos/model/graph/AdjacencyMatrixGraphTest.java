@@ -76,4 +76,60 @@ class AdjacencyMatrixGraphTest {
         }
     }
 
+    @Test
+    public void testAdjacencyMatrixGraphQuiz() {
+        AdjacencyMatrixGraph<Integer> graph = new AdjacencyMatrixGraph<>(10,false); //es no dirigido
+        try {
+
+            graph.addVertex(0);
+            graph.addVertex(1);
+            graph.addVertex(2);
+            graph.addVertex(3);
+            graph.addVertex(4);
+            graph.addVertex(5);
+            graph.addVertex(6);
+            graph.addVertex(7);
+
+            //agregamos aristas con pesos
+            graph.addEdgeAndWeight(1, 2, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(2, 1, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(1, 0, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(0, 1, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(1, 7, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(7, 1, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(2, 3, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(3, 2, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(2, 3, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(3, 7, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(7, 3, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(7, 3, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(7, 6, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(6, 7, new Random().nextInt(5, 30));
+            //grafo dirigido
+            graph.addEdgeAndWeight(3, 4, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(4, 3, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(4, 5, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(5, 4, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(5, 6, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(6, 5, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(6, 0, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(0, 6, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(5, 0, new Random().nextInt(5, 30));
+            graph.addEdgeAndWeight(0, 5, new Random().nextInt(5, 30));
+
+
+            System.out.println(graph);
+
+            //probamos los recorridos
+            System.out.println("DFS: " + graph.dfs());
+            System.out.println("BFS: " + graph.bfs() );
+
+
+        } catch (ListException | StackException e) {
+            throw new RuntimeException(e);
+        } catch (QueueException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

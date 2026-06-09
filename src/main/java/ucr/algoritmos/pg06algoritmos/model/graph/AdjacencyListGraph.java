@@ -90,7 +90,45 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
 
     @Override
     public void removeVertex(T element) throws GraphException, ListException {
-        super.removeVertex(element);
+        if (!containsVertex(element))
+            throw new GraphException("Adjacency List Graph Not Contains Vertex");
+        //ahora que sabemos que el vèrtice existe, procedemos a buscarlo para eliminarlo
+        int index = indexOf(element);//devuelve el indice del vértice a eliminar
+        //si el vértice existe en la lista de vértices
+        if (index != -1) {//devuelve el indidce del vertice a eliminar
+            for (int i = index; i < counter - 1; i++) {
+                vertexList[i] = vertexList[i + 1];
+            }
+            counter--;//lo debemos decrementar por el vértice suprimido
+        }
+
+        //ahora debemos buscar el rastro del vértice suprimido en las listas enlazadas
+        //de vecinos de los otros vértices
+        for (int i = 0; i < counter; i++) {
+            Vertex<T> vertex = vertexList[i];
+            vertex.headNode = removeNeighbor(vertex.headNode, element);
+        }
+    }
+
+    private Node<T> removeNeighbor(Node<T> headNode, T element) throws ListException {
+        if(headNode == null)throw new ListException("Linked List in Graph is Empty");
+        //Caso 1: el elemento a suprimir es el primero
+        if (equals(headNode.data,element)) {
+            headNode = headNode.neighbor; //queda apuntando al sgte nodo vecino
+            //caso 2.El elemento a suprimir puede estar en medio o al final de la lista
+        }else{
+            //vamos a brincar el nodo
+            Node<T> prev = headNode;
+            while(prev.neighbor != null){
+                if (equals(prev.neighbor.data, element)) {
+                    Node<T>removed = prev.neighbor;//es el nodo a eliminar
+                    //desenlaza el nodo
+                    prev.neighbor = removed.neighbor;
+                }
+                prev = prev.neighbor; //lo movemos al sgte vecino
+            }
+        }
+        return headNode;//modificado sin el elemento eliminado
     }
 
     @Override
@@ -121,6 +159,7 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
         return sb.toString();
     }
 
+    //TODO
     @Override
     public String dfs() throws GraphException, StackException, ListException {
         return super.dfs();
@@ -131,10 +170,5 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
         return super.bfs();
     }
 
-    public Vertex<T> getVertexByIndex(int index){
-        for (int i = 0; i < counter; i++) {
-            if (i == index) return this.vertexList[i];
-        }
-        return null;
-    }
+
 }
