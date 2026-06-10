@@ -17,9 +17,6 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public LinkedStack<Integer> stack;
     public LinkedQueue<Integer> queue;
 
-
-
-
     public AdjacencyMatrixGraph(int n, boolean directed){
         if (n <= 0) {
             System.exit(1);

@@ -13,8 +13,8 @@ class LinkedGraphTest {
 
     @Test
     public void testLinkedGraph() {
-        LinkedGraph<Integer> graph = new LinkedGraph<>(false); //es no dirigido
         try {
+            LinkedGraph<Integer> graph = new LinkedGraph<>(false,5); //es no dirigido
             for (int i = 1; i <= 5; i++)
                 graph.addVertex(i);
 
@@ -30,11 +30,11 @@ class LinkedGraphTest {
 
 
             System.out.println(graph);
-/*
+
             //probamos los recorridos
             System.out.println("DFS: " + graph.dfs());
             System.out.println("BFS: " + graph.bfs() );
-
+/*
             // Prueba de removeVertex
             System.out.println("\n=== PRUEBA removeVertex ===");
             System.out.println("Eliminando vértice 1...");
@@ -71,6 +71,10 @@ class LinkedGraphTest {
         } catch (ListException e) {
             throw new RuntimeException(e);
 
+        } catch (QueueException e) {
+            throw new RuntimeException(e);
+        } catch (StackException e) {
+            throw new RuntimeException(e);
         }
     }
 }

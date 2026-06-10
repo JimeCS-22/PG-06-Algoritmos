@@ -16,13 +16,14 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     public final boolean directed;
     public LinkedStack<Integer> stack;
     public LinkedQueue<Integer> queue;
+    public boolean[] visited;//arreglo estático para colocar los nodos visitados
 
-
-    public LinkedGraph(boolean directed) {
+    public LinkedGraph(boolean directed,int n) throws ListException {
         super();
         this.directed = directed;
         stack = new LinkedStack<>();
         queue = new LinkedQueue<>();
+        visited = new boolean[n];
     }
 
     @Override
@@ -161,16 +162,96 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     }
 
     //TODO
-
     @Override
     public String dfs() throws GraphException, StackException, ListException {
-        return "";
-    }
 
+        setVisited(false);
+
+        String info = "";
+
+        stack.clear();
+
+        //recorre todos los vertices
+        for(int i=1; i<=size(); i++){
+
+            if(!visited[i]){
+
+                stack.push(i);
+                visited[i] = true;
+
+                while(!stack.isEmpty()){
+
+                    int currentIndex = (int) stack.top();
+                    stack.pop();
+
+                    Node<T> current = getNodeByIndex(currentIndex);
+
+                    info += current.data + ", ";
+
+                    //recorre la lista de vecinos
+                    Node<T> neighbor = current.neighbor;
+
+                    while(neighbor != null){
+
+                        int neighborIndex = indexOf(neighbor.data);
+
+                        if(!visited[neighborIndex]){
+                            visited[neighborIndex] = true;
+                            stack.push(neighborIndex);
+                        }
+
+                        neighbor = neighbor.neighbor;
+                    }
+                }
+            }
+        }
+
+        return info;
+    }
     @Override
     public String bfs() throws GraphException, QueueException, ListException {
-        return "";
+
+        setVisited(false);
+        String info = "";
+        queue.clear();
+
+        //recorrer todos los vertices
+        for(int i=1; i<=size(); i++){
+            if(!visited[i]){
+                queue.enQueue(i);
+                visited[i] = true;
+
+                while(!queue.isEmpty()){
+                    int currentIndex = (int) queue.deQueue();
+                    Node<T> current = getNodeByIndex(currentIndex);
+                    info += current.data + ", ";
+
+                    //recorre los vecinos
+                    Node<T> neighbor = current.neighbor;
+
+                    while(neighbor != null){
+
+                        int neighborIndex = indexOf(neighbor.data);
+
+                        if(!visited[neighborIndex]){
+                            visited[neighborIndex] = true;
+                            queue.enQueue(neighborIndex);
+                        }
+
+                        neighbor = neighbor.neighbor;
+                    }
+                }
+            }
+        }
+
+        return info;
     }
+
+    private void setVisited(boolean value) throws ListException {
+        visited = new boolean[size()+1];
+    }
+
+
 
     @Override
     public String toString() {
@@ -183,7 +264,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
         //mostramos todos los vértices
         try {
-            int len = size(); //llamamos al método de la lista enlazada
+            int len = size(); //llamar al método de la lista enlazada
             for (int i = 1; i <= len; i++) {
 
                 sb.append("\n(").append(i).append(")-------Vertex [").append(getNodeByIndex(i).data).append("]");

@@ -178,13 +178,62 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
     //TODO
     @Override
     public String dfs() throws GraphException, StackException, ListException {
-        return super.dfs();
+        setVisited(false);//marca todos los vertices como no vistados
+        // inicia en el vertice 0
+        String info =vertexList[0].data+", ";
+        vertexList[0].setVisited(true); // lo marca
+        stack.clear();
+        stack.push(0); //lo apila
+        while( !stack.isEmpty() ){
+            // obtiene un vertice adyacente no visitado,
+            //el que esta en el tope de la pila
+            int index = adjacentVertexNotVisited( (int)stack.top());
+            if(index==-1) // no lo encontro
+                stack.pop();
+            else{
+                vertexList[index].setVisited(true); // lo marca
+                info+=vertexList[index].data+", "; //lo muestra
+                stack.push(index); //inserta la posicion
+            }
+        }
+        return info;
     }
 
     @Override
     public String bfs() throws GraphException, QueueException, ListException {
-        return super.bfs();
+        setVisited(false);//marca todos los vertices como no visitados
+        // inicia en el vertice 0
+        String info =vertexList[0].data+", ";
+        vertexList[0].setVisited(true); // lo marca
+        queue.clear();
+        queue.enQueue(0); // encola el elemento
+        int v2;
+        while(!queue.isEmpty()){
+            int v1 = (int) queue.deQueue(); // remueve el vertice de la cola
+            // hasta que no tenga vecinos sin visitar
+            while((v2=adjacentVertexNotVisited(v1)) != -1 ){
+                // obtiene uno
+                vertexList[v2].setVisited(true); // lo marca
+                info+=vertexList[v2].data+", "; //lo muestra
+                queue.enQueue(v2); // lo encola
+            }
+        }
+        return info;
     }
 
+    private void setVisited(boolean value) {
+        for (int i = 0; i < counter; i++) {
+            vertexList[i].setVisited(value); //value==true o false
+        }//for
+    }
 
+    private int adjacentVertexNotVisited(int element) {
+
+        for (int i = 0; i < counter; i++) {
+           int data = Integer.parseInt( vertexList[i].data.toString());
+            if(!(data == element) && !vertexList[i].isVisited())
+                return i;//retorna la posicion del vertice adyacente no visitado
+        }//for i
+        return -1;
+    }
 }
