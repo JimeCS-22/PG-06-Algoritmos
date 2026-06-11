@@ -2,8 +2,11 @@ package ucr.algoritmos.pg06algoritmos.model.graph;
 
 import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.Queue.QueueException;
+import ucr.algoritmos.pg06algoritmos.model.linkedList.LinkedList;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 import ucr.algoritmos.pg06algoritmos.model.stack.StackException;
+
+import java.util.Random;
 
 public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrixGraph<T> {
 
@@ -111,25 +114,41 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
     }
 
     private Node<T> removeNeighbor(Node<T> headNode, T element) throws ListException {
-        if(headNode == null)throw new ListException("Linked List in Graph is Empty");
-        //Caso 1: el elemento a suprimir es el primero
-        if (equals(headNode.data,element)) {
-            headNode = headNode.neighbor; //queda apuntando al sgte nodo vecino
-            //caso 2.El elemento a suprimir puede estar en medio o al final de la lista
-        }else{
-            //vamos a brincar el nodo
-            Node<T> prev = headNode;
-            while(prev.neighbor != null){
-                if (equals(prev.neighbor.data, element)) {
-                    Node<T>removed = prev.neighbor;//es el nodo a eliminar
-                    //desenlaza el nodo
-                    prev.neighbor = removed.neighbor;
-                }
-                prev = prev.neighbor; //lo movemos al sgte vecino
+
+            // Si la lista está vacía no hay nada que eliminar
+            if (headNode == null)
+                return null;
+
+            // Caso 1:
+            // El vecino a eliminar es el primero de la lista
+            if (equals(headNode.data, element)) {
+                return headNode.neighbor;
             }
-        }
-        return headNode;//modificado sin el elemento eliminado
+
+            // Caso 2:
+            // El vecino está en medio o al final
+            Node<T> prev = headNode;
+
+            while (prev != null && prev.neighbor != null) {
+
+                // Encontramos el nodo a eliminar
+                if (equals(prev.neighbor.data, element)) {
+
+                    // Saltamos el nodo
+                    prev.neighbor = prev.neighbor.neighbor;
+
+                    // ya eliminamos el nodo, salimos del método
+                    return headNode;
+                }
+
+                // Avanzamos al siguiente nodo
+                prev = prev.neighbor;
+            }
+
+            // Si no encontró el elemento devuelve la lista original sin el elemento eliminado
+            return headNode;
     }
+
 
     @Override
     public void removeEdge(T a, T b) throws GraphException, ListException {
@@ -176,82 +195,70 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
     }
 
     //TODO
-    @Override
     public String dfs() throws GraphException, StackException, ListException {
-
-        if(isEmpty())
-            throw new GraphException("Adjacency List Graph is Empty");
+        if (isEmpty()) throw new GraphException("Graph is empty");
 
         setVisited(false);
-
         StringBuilder sb = new StringBuilder();
-
         stack.clear();
 
-        vertexList[0].setVisited(true);
-        sb.append(vertexList[0].data).append(", ");
+        for (int i = 0; i < size(); i++) {
+            if (!vertexList[i].isVisited()) {
+                vertexList[i].setVisited(true);
+                sb.append(vertexList[i].data).append(", ");
+                stack.push(i);
 
-        stack.push(0);
-
-        while(!stack.isEmpty()){
-
-            int current = (int) stack.top();
-
-            int neighbor = adjacentVertexNotVisited(current);
-
-            if(neighbor == -1){
-                stack.pop();
-            }else{
-                vertexList[neighbor].setVisited(true);
-                sb.append(vertexList[neighbor].data).append(", ");
-                stack.push(neighbor);
+                while (!stack.isEmpty()) {
+                    int current = (int) stack.pop();
+                    int neighbor;
+                    while ((neighbor = adjacentVertexNotVisited(current)) != -1) {
+                        vertexList[neighbor].setVisited(true);
+                        sb.append(vertexList[neighbor].data).append(", ");
+                        stack.push(neighbor);
+                    }
+                }
             }
         }
-
         return sb.toString();
     }
+
 
     @Override
     public String bfs() throws GraphException, QueueException, ListException {
-
-        if(isEmpty())
+        if (isEmpty())
             throw new GraphException("Adjacency List Graph is Empty");
 
         setVisited(false);
-
         StringBuilder sb = new StringBuilder();
-
         queue.clear();
 
-        vertexList[0].setVisited(true);
-        sb.append(vertexList[0].data).append(", ");
+        // Recorre todos los vértices para cubrir componentes desconectados
+        for (int i = 0; i < size(); i++) {
+            if (!vertexList[i].isVisited()) {
+                vertexList[i].setVisited(true);
+                sb.append(vertexList[i].data).append(", ");
+                queue.enQueue(i);
 
-        queue.enQueue(0);
+                while (!queue.isEmpty()) {
+                    int current = (int) queue.deQueue();
 
-        while(!queue.isEmpty()){
-
-            int current = (int) queue.deQueue();
-
-            Node<T> aux = vertexList[current].headNode;
-
-            while(aux != null){
-
-                int neighbor = indexOf(aux.data);
-
-                if(neighbor != -1 && !vertexList[neighbor].isVisited()){
-
-                    vertexList[neighbor].setVisited(true);
-                    sb.append(vertexList[neighbor].data).append(", ");
-
-                    queue.enQueue(neighbor);
+                    // Itera sobre la lista de adyacencia del vértice actual
+                    Node<T> aux = vertexList[current].headNode;
+                    while (aux != null) {
+                        int neighbor = indexOf(aux.data);
+                        if (neighbor != -1 && !vertexList[neighbor].isVisited()) {
+                            vertexList[neighbor].setVisited(true);
+                            sb.append(vertexList[neighbor].data).append(", ");
+                            queue.enQueue(neighbor);
+                        }
+                        aux = aux.next; // usa next en tu LinkedList
+                    }
                 }
-
-                aux = aux.neighbor;
             }
         }
-
         return sb.toString();
     }
+
 
     private void setVisited(boolean value) {
         for (int i = 0; i < counter; i++) {
@@ -330,7 +337,7 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
     }
 
     /**
-     *Metodo que devuelva el grado del grafo
+     *Metodo que devuelve el grado del grafo
      **/
     public int getGraphDegree() throws GraphException, ListException {
 

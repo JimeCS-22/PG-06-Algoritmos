@@ -18,8 +18,6 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public LinkedQueue<Integer> queue;
 
 
-
-
     public AdjacencyMatrixGraph(int n, boolean directed){
         if (n <= 0) {
             System.exit(1);
@@ -129,7 +127,7 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public void removeVertex(T element) throws GraphException, ListException {
         if(isEmpty()) throw new GraphException("Adjacency Matrix Graph is Empty");//ver si si
 
-        int index = indexOf(element);//devuelve el indice del vétice a eliminar
+        int index = indexOf(element);//devuelve el indice del vértice a eliminar
         //si el vértice existe en la lista de vértices
         if(index != -1) {
             //Se desplaza los vértices hacia la izquierda
@@ -382,9 +380,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     }
 
     public Vertex<T> getVertexByIndex(int index){
-        for (int i = 0; i < counter; i++) {
-            if (i == index) return this.vertexList[i];
-        }
-        return null;
+        if(index < 0 || index >= counter)
+            return null;
+
+        return vertexList[index];
     }
 }
