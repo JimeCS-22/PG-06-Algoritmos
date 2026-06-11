@@ -14,9 +14,9 @@ class AdjacencyMatrixGraphTest {
 
     @Test
     public void testAdjacencyMatrixGraph() {
-        AdjacencyMatrixGraph<String> graph = new AdjacencyMatrixGraph<>(10,false); //es no dirigido
+        AdjacencyMatrixGraph<String> graph = new AdjacencyMatrixGraph<>(15,false); //es no dirigido
         try {
-           String [] colors = {"Red", "Blue", "Green" , "Yellow", "Purple", "Orange" , "Pink" , "Black", "White"};
+           String [] colors = {"Red", "Blue", "Green" , "Yellow", "Purple", "Orange" , "Pink" , "Black"};
            Random  random = new Random();
 
             String[] vertices = {"P", "T", "K", "D", "S", "M", "H", "A", "E", "Q", "G", "R", "B", "J"};

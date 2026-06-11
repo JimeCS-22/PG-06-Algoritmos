@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg05algoritmos.controller.MainController">
+    <top>
+        <VBox prefHeight="62.0" prefWidth="1036.0" styleClass="header-bar" stylesheets="@styles.css" BorderPane.alignment="CENTER">
+            <children>
+                <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" stylesheets="@styles.css">
+                    <children>
+                        <Label prefHeight="51.0" prefWidth="229.0" styleClass="header-badge" stylesheets="@styles.css" text="PG-05">
+                            <font>
+                                <Font size="18.0" />
+                            </font>
+                        </Label>
+                        <VBox prefHeight="100.0" prefWidth="1013.0">
+                            <children>
+                                <Label prefHeight="26.0" prefWidth="534.0" styleClass="header-title" stylesheets="@styles.css" text="Árboles Binarios Simples, BST y AVL en JavaFX">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                                <Label styleClass="header-sub" stylesheets="@styles.css" text="IF-3001 Algoritmos y Estructuras de datos">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <TabPane fx:id="mainTabs" prefHeight="200.0" prefWidth="200.0" styleClass="main-tabs" stylesheets="@styles.css" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+
+                <Tab text="Árbol Bnario Simple">
+                    <content>
+                        <SplitPane dividerPositions="0.3113482056256062" prefHeight="200.0" prefWidth="200.0">
+                            <items>
+                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
+                                    <children>
+                                        <Label styleClass="panel-title" text="ÁRBOL Binario Simple">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                        </Label>
+                                        <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="Inserción por niveles (BFS)">
+                                            <font>
+                                                <Font size="30.0" />
+                                            </font>
+                                        </Label>
+                                        <HBox>
+                                            <children>
+                                                <Label styleClass="param-label" text="Valor (entero):" />
+                                                <TextField fx:id="txtValueBTree" />
+                                            </children>
+                                        </HBox>
+                                        <VBox prefHeight="111.0" prefWidth="290.0" spacing="5.0">
+                                            <children>
+                                                <Button fx:id="btnAddBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="291.0" styleClass="btn-primary" text="+ Insertar" />
+                                                <Button fx:id="btnRemoveBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" styleClass="btn-gray" text="🗑Eliminar" />
+                                                <Button fx:id="btnClearBTree" mnemonicParsing="false" prefHeight="32.0" prefWidth="289.0" styleClass="btn-ghost" text="Limpiar árbol" />
+                                            </children>
+                                        </VBox>
+                                        <Label styleClass="param-label" text="Recorridos" />
+                                        <HBox prefHeight="36.0" prefWidth="289.0" spacing="10.0">
+                                            <children>
+                                                <ComboBox fx:id="cbRecorridosBTree" prefHeight="27.0" prefWidth="195.0" />
+                                                <Button fx:id="btnPlayBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="51.0" styleClass="btn-primary" text="▶" />
+                                            </children>
+                                        </HBox>
+                                        <HBox fx:id="RecorridosBTree" prefHeight="61.0" prefWidth="289.0">
+                                            <children>
+                                                <Label fx:id="lblTours1"
+                                                       wrapText="true"
+                                                       prefWidth="280"/>
+                                            </children>
+                                        </HBox>
+                                        <Label fx:id="lblBTreeinfo" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Nodos: " textAlignment="CENTER" />
+                                        <Label fx:id="lblBTreeDelete" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Eliminado:" textAlignment="CENTER" />
+                                        <Label text="Leyenda de colores" />
+                                        <VBox prefHeight="132.0" prefWidth="289.0" style="         -fx-control-inner-background: #0f172a;         -fx-background-color: #0f172a;         -fx-text-fill: white;         -fx-font-size: 14px;         -fx-font-family: 'Consolas';         -fx-border-color: #1e293b;         -fx-border-radius: 12;         -fx-background-radius: 12;         -fx-padding: 12;     " styleClass="amber-card">
+                                            <children>
+                                                <Label style="-fx-text-fill: #29A3E1; -fx-font-size: 14px;" text="● Raíz" />
+                                                <Label style="-fx-text-fill: #10C98A; -fx-font-size: 14px;" text="● Hojas" />
+                                                <Label style="-fx-text-fill: #274D7D; -fx-font-size: 14px;" text="● Nodo Interno" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                                <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
+                                    <children>
+                                        <Canvas fx:id="canvasBTree" height="566.0" width="677.0" />
+                                        <HBox prefHeight="35.0" prefWidth="548.0" />
+                                    </children>
+                                </VBox>
+                            </items>
+                        </SplitPane>
+                    </content>
+                </Tab>
+                <Tab text="BST Tree">
+                    <content>
+                        <SplitPane dividerPositions="0.5615906886517944" prefHeight="200.0" prefWidth="200.0">
+                            <items>
+                                <VBox prefHeight="200.0" prefWidth="100.0" spacing="8.0" styleClass="panel">
+                                    <children>
+                                        <Label styleClass="panel-title" text="Lista enlazada circular doble: HEAD⬅➡  nodos⬅ ➡ NULL">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                        </Label>
+                                        <ScrollPane fitToHeight="true" fitToWidth="false" hbarPolicy="ALWAYS" pannable="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER">
+                                            <content>
+                                                <Canvas fx:id="canvasListDoubly" height="300" width="2000" />
+                                            </content>
+                                        </ScrollPane>
+                                        <VBox prefHeight="102.0" prefWidth="548.0" styleClass="info-box" stylesheets="@styles.css">
+                                            <children>
+                                                <Label styleClass="axis-label" text="Representación:" />
+                                                <TextArea fx:id="txAreaNodeRepreDoubly" prefHeight="84.0" prefWidth="522.0" />
+                                            </children>
+                                        </VBox>
+                                        <HBox prefHeight="35.0" prefWidth="548.0">
+                                            <children>
+                                                <Label fx:id="txtInsertar" text="Insertado " />
+                                                <Label fx:id="txtInsertadoInDoubly" text="..." />
+                                            </children>
+                                        </HBox>
+                                        <Label styleClass="axis-label" text="Contenido de la Lista Enlazada Doble" />
+                                        <TableView fx:id="tableCircularDoubly" prefHeight="211.0" prefWidth="548.0" styleClass="custom-table" stylesheets="@styles.css">
+                                            <columns>
+                                                <TableColumn fx:id="colIdDoubly" prefWidth="66.39998865127563" text="Id" />
+                                                <TableColumn fx:id="colNombre" prefWidth="87.19998931884766" text="Name" />
+                                                <TableColumn fx:id="colPrice" prefWidth="82.39996337890625" text="Price" />
+                                                <TableColumn fx:id="colStock" prefWidth="88.00001525878906" text="Stock" />
+                                                <TableColumn fx:id="colType" prefWidth="95.99993896484375" text="Type" />
+                                                <TableColumn fx:id="colRegDate" prefWidth="95.99993896484375" text="Reg Date" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
+                                    <children>
+                                        <VBox prefHeight="114.0" prefWidth="420.0" spacing="5.0" styleClass="info-box">
+                                            <children>
+                                                <Label prefHeight="26.0" prefWidth="150.0" styleClass="title-label" text="Product Information" />
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="93.0" styleClass="param-label" text="Id:" textAlignment="CENTER" />
+                                                        <TextField fx:id="txtId" prefHeight="22.0" prefWidth="130.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="97.0" styleClass="param-label" text="Name:" textAlignment="CENTER" />
+                                                        <TextField fx:id="txtName" prefHeight="22.0" prefWidth="126.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="97.0" styleClass="param-label" text="Price:" textAlignment="CENTER" />
+                                                        <TextField fx:id="txtPrice" prefHeight="22.0" prefWidth="126.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="97.0" styleClass="param-label" text="Stock:" textAlignment="CENTER" />
+                                                        <TextField fx:id="txtStock" prefHeight="22.0" prefWidth="126.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="94.0" styleClass="param-label" text="Type:" textAlignment="CENTER" />
+                                                        <ChoiceBox fx:id="bxType" prefWidth="150.0" />
+                                                    </children>
+                                                </HBox>
+                                                <HBox prefHeight="28.0" prefWidth="395.0">
+                                                    <children>
+                                                        <Label prefHeight="18.0" prefWidth="96.0" styleClass="param-label" text="Register date:" textAlignment="CENTER" />
+                                                        <DatePicker fx:id="dpRegisterDate" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                        <HBox prefHeight="32.0" prefWidth="481.0">
+                                            <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0" />
+                                            </children>
+                                        </HBox>
+                                        <Label prefHeight="18.0" prefWidth="104.0" styleClass="axis-label" text="Operaciones" textAlignment="CENTER" />
+                                        <HBox prefHeight="35.0" prefWidth="316.0" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="btnAgregarDoble" mnemonicParsing="false" styleClass="btn-gray" text="Agregar" />
+                                                <Button fx:id="btnSearchDoble" mnemonicParsing="false" styleClass="btn-gray" text="🔍Buscar" />
+                                                <Button fx:id="btnClearListDoble" mnemonicParsing="false" styleClass="btn-ghost" text="↻ Limpiar Todo" />
+                                            </children>
+                                        </HBox>
+                                        <HBox prefHeight="51.0" prefWidth="421.0" spacing="10.0">
+                                            <children>
+                                                <HBox prefHeight="17.0" prefWidth="419.0" spacing="10.0">
+                                                    <children>
+                                                        <Button fx:id="btnOrdenarNombre" mnemonicParsing="false" styleClass="btn-primary" text="Ordenar por Nombre" />
+                                                        <Button fx:id="btnOrdenarStock" mnemonicParsing="false" prefHeight="30.0" prefWidth="138.0" styleClass="btn-primary" text="Ordenar por Stock" />
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </HBox>
+                                        <HBox prefHeight="17.0" prefWidth="419.0" spacing="10.0">
+                                            <children>
+                                                <Button fx:id="btnEliminarDoble" mnemonicParsing="false" styleClass="btn-accent" text="🗑Eliminar" />
+                                                <Button fx:id="btnEliminarInicio" mnemonicParsing="false" styleClass="btn-accent" text="🗑Eliminar Inicio" />
+                                                <Button fx:id="btnEliminarFinal" mnemonicParsing="false" prefHeight="30.0" prefWidth="127.0" styleClass="btn-accent" text="🗑Eliminar Final" />
+                                            </children>
+                                        </HBox>
+                                        <Label styleClass="param-label" text="Registro de Operaciones" />
+                                        <ListView fx:id="listViewOperationsListDoubly" prefHeight="151.0" prefWidth="419.0" />
+                                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="info-box">
+                                            <children>
+                                                <Label styleClass="info-title" text="Estructura del Nodo" />
+                                                <TextArea fx:id="txAreaNodeStructureD" editable="false" prefHeight="200.0" prefWidth="200.0" styleClass="info-box-dark" text="class Node&lt;T&gt; {&#10;     T data; // dato almacenado en el nodo&#10;      Node&lt;T&gt; next; //apuntador al siguiente nodo o a HEAD&#10;      Node&lt;T&gt; prev; //apuntador al nodo anterior o a TAIL&#10;}&#10;" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </items>
+                        </SplitPane>
+                    </content>
+                </Tab>
+                <!-- ... TAB 3: AVL ... -->
+                <Tab text="AVL Tree -Balanceado">
+                    <content>
+                        <SplitPane dividerPositions="0.3113482056256062" prefHeight="200.0" prefWidth="200.0">
+                            <items>
+                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
+                                    <children>
+                                        <Label styleClass="panel-title" text="ÁRBOL AVL">
+                                            <font>
+                                                <Font size="10.0" />
+                                            </font>
+                                        </Label>
+                                        <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="BST auto-balanceado - O(log n) garantizado">
+                                            <font>
+                                                <Font size="30.0" />
+                                            </font>
+                                        </Label>
+                                        <HBox>
+                                            <Label styleClass="param-label" text="Valor (entero):" />
+                                            <TextField fx:id="txtAvlValue" />
+                                        </HBox>
+                                        <VBox prefHeight="148.0" prefWidth="289.0" spacing="5.0">
+                                            <children>
+                                                <Button fx:id="btnAddAvl" mnemonicParsing="false" prefHeight="30.0" prefWidth="291.0" styleClass="btn-primary" text="+ Insertar" />
+                                                <Button fx:id="btnSearchAvl" mnemonicParsing="false" prefHeight="30.0" prefWidth="296.0" styleClass="btn-accent" text="🔍Buscar" />
+                                                <Button fx:id="btnRemoveAvl" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" styleClass="btn-gray" text="🗑Eliminar" />
+                                                <Button fx:id="btnClearAvl" mnemonicParsing="false" prefHeight="32.0" prefWidth="289.0" styleClass="btn-ghost" text="Limpiar árbol" />
+                                                <Label styleClass="param-label" text="Última rotación aplicada:" />
+                                                <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                                    <content>
+                                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                                            <children>
+                                                                <Label fx:id="lblRotacion" prefHeight="200.0" prefWidth="295.0" text="--" />
+                                                            </children>
+                                                        </AnchorPane>
+                                                    </content>
+                                                </ScrollPane>
+                                            </children>
+                                        </VBox>
+                                        <Label styleClass="param-label" text="Recorridos" />
+                                        <HBox prefHeight="36.0" prefWidth="289.0" spacing="10.0">
+                                            <children>
+                                                <ComboBox fx:id="cbRecorridos" prefHeight="27.0" prefWidth="195.0" />
+                                                <Button fx:id="btnPlayAvl" mnemonicParsing="false" prefHeight="30.0" prefWidth="51.0" styleClass="btn-primary" text="▶" />
+                                            </children>
+                                        </HBox>
+                                        <HBox prefHeight="61.0" prefWidth="289.0">
+                                            <children>
+                                                <Label fx:id="lblTours" prefHeight="42.0" prefWidth="130.0" />
+                                            </children>
+                                        </HBox>
+                                        <Label fx:id="lblAvlInfo" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Nodos: " textAlignment="CENTER" />
+                                        <Label fx:id="lblAvlInfo1" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Info:" textAlignment="CENTER" />
+                                        <VBox prefHeight="132.0" prefWidth="289.0" style="         -fx-control-inner-background: #0f172a;         -fx-background-color: #0f172a;         -fx-text-fill: white;         -fx-font-size: 14px;         -fx-font-family: 'Consolas';         -fx-border-color: #1e293b;         -fx-border-radius: 12;         -fx-background-radius: 12;         -fx-padding: 12;     " styleClass="amber-card">
+                                            <children>
+                                                <Label styleClass="info-title" text="Leyenda FE:" />
+                                            </children><Label style="-fx-text-fill: #60a5fa;                   -fx-font-size: 14px;" text="● Raíz" />
+
+                                            <Label style="-fx-text-fill: #4ade80;                   -fx-font-size: 14px;" text="● FE = 0 (perfecto)" />
+
+                                            <Label style="-fx-text-fill: #facc15;                   -fx-font-size: 14px;" text="● FE = ±1 (aceptable)" />
+
+                                            <Label style="-fx-text-fill: #f87171;                   -fx-font-size: 14px;" text="● FE = ±2 (rotar ⚠)" />
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                                <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
+                                    <children>
+                                        <Canvas fx:id="canvasAVL" height="566.0" width="677.0" />
+                                        <HBox prefHeight="35.0" prefWidth="548.0" />
+                                    </children>
+                                </VBox>
+                            </items>
+                        </SplitPane>
+                    </content>
+                </Tab>
+
+
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>

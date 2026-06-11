@@ -1,4 +1,4 @@
-module ucr.algoritmos.pg05algoritmos {
+module ucr.algoritmos.pg06algoritmos {
     requires java.desktop;
     requires javafx.graphics;
     requires javafx.fxml;
@@ -8,6 +8,8 @@ module ucr.algoritmos.pg05algoritmos {
     opens ucr.algoritmos.pg06algoritmos to javafx.fxml;
     opens ucr.algoritmos.pg06algoritmos.model to javafx.base;
     exports ucr.algoritmos.pg06algoritmos;
+    exports ucr.algoritmos.pg06algoritmos.controller;
+    opens ucr.algoritmos.pg06algoritmos.controller to javafx.fxml;
     exports util;
     opens util to javafx.fxml;
     opens ucr.algoritmos.pg06algoritmos.model.linkedList to javafx.base;
