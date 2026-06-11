@@ -20,6 +20,8 @@ class AdjacencyListGraphTest {
 
 
             //agregamos aristas con pesos
+
+
             graph.addEdgeAndWeight(1, 2, new Random().nextInt(5, 30));
             graph.addEdgeAndWeight(1, 3, new Random().nextInt(5, 30));
             graph.addEdgeAndWeight(2, 3, new Random().nextInt(5, 30));
@@ -30,6 +32,16 @@ class AdjacencyListGraphTest {
             graph.addEdgeAndWeight(4, 5, new Random().nextInt(5, 30));
 
             System.out.println(graph);
+
+            System.out.println("BFS Transversal Tour: " + graph.bfs());
+            System.out.println("DFS Transversal Tour: " + graph.dfs());
+            System.out.println("---------------------------");
+
+            for (int i = 1; i <= 5; i++) {
+
+                System.out.println("getVertexDegree [ " + i +  " ] " + graph.getVertexDegree(i));
+
+            }
 
             // Prueba de removeVertex
             System.out.println("\n=== PRUEBA removeVertex ===");

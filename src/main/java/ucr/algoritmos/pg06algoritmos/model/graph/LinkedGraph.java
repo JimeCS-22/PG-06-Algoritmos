@@ -16,14 +16,13 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     public final boolean directed;
     public LinkedStack<Integer> stack;
     public LinkedQueue<Integer> queue;
-    public boolean[] visited;//arreglo estático para colocar los nodos visitados
 
-    public LinkedGraph(boolean directed,int n) throws ListException {
+
+    public LinkedGraph(boolean directed) {
         super();
         this.directed = directed;
         stack = new LinkedStack<>();
         queue = new LinkedQueue<>();
-        visited = new boolean[n];
     }
 
     @Override
@@ -41,7 +40,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
         }
         return !directed ? getNodeNeighbor(nodeA, b) != null && getNodeNeighbor(nodeB,a) != null
-                   : getNodeNeighbor(nodeA,b)!= null;
+                : getNodeNeighbor(nodeA,b)!= null;
 
     }
     private Node<T> getNodeNeighbor(Node<T> headNode, T element) {
@@ -106,7 +105,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
             throw new GraphException("Linked Graph Not Contains Vertex");
         if(!containsEdge(a, b)) {
             Node<T> nodeA = getNode(a);
-           addNeighbor(nodeA, b, weight);
+            addNeighbor(nodeA, b, weight);
             if(!directed) {
                 Node<T> nodeB = getNode(b);
                 // a partir del node B contruya
@@ -162,96 +161,97 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     }
 
     //TODO
+
     @Override
     public String dfs() throws GraphException, StackException, ListException {
 
-        setVisited(false);
+        if(isEmpty())
+            throw new GraphException("Empty Graph");
 
-        String info = "";
+        int n = size();
+        boolean[] visited = new boolean[n];
+
+        StringBuilder sb = new StringBuilder();
 
         stack.clear();
 
-        //recorre todos los vertices
-        for(int i=1; i<=size(); i++){
+        visited[0] = true;
+        sb.append(getNodeByIndex(1).data).append(" ");
 
-            if(!visited[i]){
+        stack.push(0);
 
-                stack.push(i);
-                visited[i] = true;
+        while(!stack.isEmpty()){
 
-                while(!stack.isEmpty()){
+            int current = (int) stack.top();
 
-                    int currentIndex = (int) stack.top();
-                    stack.pop();
+            int neighbor = adjacentVertexNotVisited(current, visited);
 
-                    Node<T> current = getNodeByIndex(currentIndex);
-
-                    info += current.data + ", ";
-
-                    //recorre la lista de vecinos
-                    Node<T> neighbor = current.neighbor;
-
-                    while(neighbor != null){
-
-                        int neighborIndex = indexOf(neighbor.data);
-
-                        if(!visited[neighborIndex]){
-                            visited[neighborIndex] = true;
-                            stack.push(neighborIndex);
-                        }
-
-                        neighbor = neighbor.neighbor;
-                    }
-                }
+            if(neighbor == -1){
+                stack.pop();
+            }else{
+                visited[neighbor] = true;
+                sb.append(getNodeByIndex(neighbor + 1).data).append(" ");
+                stack.push(neighbor);
             }
         }
 
-        return info;
+        return sb.toString();
     }
+
     @Override
     public String bfs() throws GraphException, QueueException, ListException {
 
-        setVisited(false);
-        String info = "";
+        if(isEmpty())
+            throw new GraphException("Empty Graph");
+
+        int n = size();
+        boolean[] visited = new boolean[n];
+
+        StringBuilder sb = new StringBuilder();
+
         queue.clear();
 
-        //recorrer todos los vertices
-        for(int i=1; i<=size(); i++){
-            if(!visited[i]){
-                queue.enQueue(i);
-                visited[i] = true;
+        visited[0] = true;
+        sb.append(getNodeByIndex(1).data).append(" ");
 
-                while(!queue.isEmpty()){
-                    int currentIndex = (int) queue.deQueue();
-                    Node<T> current = getNodeByIndex(currentIndex);
-                    info += current.data + ", ";
+        queue.enQueue(0);
 
-                    //recorre los vecinos
-                    Node<T> neighbor = current.neighbor;
+        while(!queue.isEmpty()){
 
-                    while(neighbor != null){
+            int current = queue.deQueue();
 
-                        int neighborIndex = indexOf(neighbor.data);
+            int neighbor;
 
-                        if(!visited[neighborIndex]){
-                            visited[neighborIndex] = true;
-                            queue.enQueue(neighborIndex);
-                        }
+            while((neighbor = adjacentVertexNotVisited(current, visited)) != -1){
 
-                        neighbor = neighbor.neighbor;
-                    }
-                }
+                visited[neighbor] = true;
+                sb.append(getNodeByIndex(neighbor + 1).data).append(" ");
+                queue.enQueue(neighbor);
             }
         }
 
-        return info;
+        return sb.toString();
     }
 
-    private void setVisited(boolean value) throws ListException {
-        visited = new boolean[size()+1];
+    private int adjacentVertexNotVisited(int indexVertex, boolean[] visited)
+            throws ListException {
+
+        Node<T> headNode = getNodeByIndex(indexVertex + 1);
+        Node<T> aux = headNode.neighbor;
+
+        while(aux != null){
+
+            int indexNeighbor = indexOf(aux.data) - 1;
+
+            if(indexNeighbor != -1 && !visited[indexNeighbor]){
+                return indexNeighbor;
+            }
+
+            aux = aux.neighbor;
+        }
+
+        return -1;
     }
-
-
 
     @Override
     public String toString() {
@@ -264,7 +264,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
         //mostramos todos los vértices
         try {
-            int len = size(); //llamar al método de la lista enlazada
+            int len = size(); //llamamos al método de la lista enlazada
             for (int i = 1; i <= len; i++) {
 
                 sb.append("\n(").append(i).append(")-------Vertex [").append(getNodeByIndex(i).data).append("]");
@@ -279,6 +279,109 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
             throw new RuntimeException(e);
         }
         return super.toString() + sb;
+    }
+
+    /**
+     * Metodo que devuelve el grado del vertice del elemento dado,
+     * de un grafo dirgido grado de salida + grado de entrada
+     **/
+    public int getVertexDegree(T element) throws GraphException, ListException {
+
+        if(isEmpty())
+            throw new GraphException("Linked Graph is Empty");
+
+        if(!containsVertex(element))
+            throw new GraphException("Linked Graph Not Contains Vertex");
+
+        int degree = 0;
+
+        Node<T> vertex = getNode(element);
+
+        if(!directed){
+
+            // contar vecinos del vértice
+            Node<T> aux = vertex.neighbor;
+
+            while(aux != null){
+                degree++;
+                aux = aux.neighbor;
+            }
+
+        }else{
+
+            // grado de salida
+            Node<T> aux = vertex.neighbor;
+
+            while(aux != null){
+                degree++;
+                aux = aux.neighbor;
+            }
+
+            // grado de entrada
+            int len = size();
+
+            for(int i = 1; i <= len; i++){
+
+                aux = getNodeByIndex(i).neighbor;
+
+                while(aux != null){
+
+                    if(equals(aux.data, element))
+                        degree++;
+
+                    aux = aux.neighbor;
+                }
+            }
+        }
+
+        return degree;
+    }
+
+    /**
+     *Metodo que devuelva el grado del grafo
+     **/
+    public int getGraphDegree() throws GraphException, ListException {
+
+        if(isEmpty()) throw new GraphException("Linked Graph is Empty");
+
+        int maxDegree = 0;
+        int len = size();
+
+        for(int i = 1; i <= len; i++){
+
+            Node<T> vertex = getNodeByIndex(i);
+            int degree = getVertexDegree(vertex.data);
+
+            if(degree > maxDegree) maxDegree = degree;
+        }
+
+        return maxDegree;
+
+    }
+
+    /**
+     * Metodo que devuelva el número total de aristas existentes en el grafo
+     **/
+    public int totalEdges() throws GraphException, ListException {
+
+        if(isEmpty())
+            throw new GraphException("Linked Graph is Empty");
+
+        int edges = 0;
+
+        int len = size();
+
+        for(int i = 1; i <= len; i++) {
+
+            Node<T> aux = getNodeByIndex(i).neighbor;
+
+            while(aux != null) {
+                edges++;
+                aux = aux.neighbor;
+            }
+        }
+
+        return directed ? edges : edges / 2;
     }
 
     /**Metodos de ayuda**/

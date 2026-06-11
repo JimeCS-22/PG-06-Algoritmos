@@ -17,6 +17,9 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
     public LinkedStack<Integer> stack;
     public LinkedQueue<Integer> queue;
 
+
+
+
     public AdjacencyMatrixGraph(int n, boolean directed){
         if (n <= 0) {
             System.exit(1);
@@ -151,11 +154,11 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
             vertexList[counter] = null;
             counter--;
 
-           for (int i = 0; i <= counter; i++) {
-               //cambia las filas y la col es la ult(columna "sucia")
-               adjancencyMatrix[i][counter] = (T)Integer.valueOf(0);
-               adjancencyMatrix[counter][i] = (T)Integer.valueOf(0);
-           }
+            for (int i = 0; i <= counter; i++) {
+                //cambia las filas y la col es la ult(columna "sucia")
+                adjancencyMatrix[i][counter] = (T)Integer.valueOf(0);
+                adjancencyMatrix[counter][i] = (T)Integer.valueOf(0);
+            }
         }
     }
 
@@ -279,6 +282,94 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         }
         return sb.toString();
     }
+
+    /**
+     * Metodo que devuelve el grado del vertice del elemento dado, de un grafo dirgido grado de salida + grado de entrada
+     *
+     **/
+
+    public int getVertexDegree(T element) throws GraphException, ListException {
+
+        if (isEmpty()) throw new ListException("Adjacency Matrix Graph is Empty");
+
+        if (!containsVertex(element)) throw new ListException("Adjacency Matrix Graph Not Contains Vertex");
+
+        int value = indexOf(element);//Encontramos la posicion del elemento
+        int degree = 0; //El va a devolver el grado del vertice
+
+        //Grafo no dirigido
+        if (!directed){
+
+            for (int i = 0; i < counter; i++) {
+                if (!equals(adjancencyMatrix[value][i], (T) Integer.valueOf(0))) {
+                    degree++;
+                }
+            }
+
+        }else{//Grafo dirigido
+
+            // salida
+            for (int i = 0; i < counter; i++) {
+                if (!equals(adjancencyMatrix[value][i], (T) Integer.valueOf(0))) {
+                    degree++;
+                }
+            }
+
+            // entrada
+            for (int i = 0; i < counter; i++) {
+                if (!equals(adjancencyMatrix[i][value], (T) Integer.valueOf(0))) {
+                    degree++;
+                }
+            }
+
+        }
+
+        return degree;
+
+    }
+
+    /**
+     *Metodo que devuelva el grado del grafo
+     **/
+    public int getGraphDegree() throws GraphException, ListException {
+
+        if (isEmpty()) throw new ListException("Adjacency Matrix Graph is Empty");
+
+        int maxDegree = 0;
+
+        for (int i = 0; i < counter; i++) {
+
+            int degree =  getVertexDegree(vertexList[i].data);
+
+            if (degree > maxDegree) maxDegree = degree;
+
+        }
+
+        return maxDegree;
+    }
+
+    /**
+     * Metodo que devuelva el número total de aristas existentes en el grafo
+     **/
+    public int totalEdges() throws GraphException, ListException {
+
+        if(isEmpty())
+            throw new GraphException("Adjacency Matrix Graph is Empty");
+
+        int edges = 0;
+
+        for(int i = 0; i < counter; i++) {
+            for(int j = 0; j < counter; j++) {
+
+                if(!equals(adjancencyMatrix[i][j], (T) Integer.valueOf(0))) {
+                    edges++;
+                }
+            }
+        }
+
+        return directed ? edges : edges / 2;
+    }
+
 
     /**Metodos de ayuda**/
     public boolean equals(T a, T b)  {

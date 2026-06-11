@@ -178,47 +178,79 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
     //TODO
     @Override
     public String dfs() throws GraphException, StackException, ListException {
-        setVisited(false);//marca todos los vertices como no vistados
-        // inicia en el vertice 0
-        String info =vertexList[0].data+", ";
-        vertexList[0].setVisited(true); // lo marca
+
+        if(isEmpty())
+            throw new GraphException("Adjacency List Graph is Empty");
+
+        setVisited(false);
+
+        StringBuilder sb = new StringBuilder();
+
         stack.clear();
-        stack.push(0); //lo apila
-        while( !stack.isEmpty() ){
-            // obtiene un vertice adyacente no visitado,
-            //el que esta en el tope de la pila
-            int index = adjacentVertexNotVisited( (int)stack.top());
-            if(index==-1) // no lo encontro
+
+        vertexList[0].setVisited(true);
+        sb.append(vertexList[0].data).append(", ");
+
+        stack.push(0);
+
+        while(!stack.isEmpty()){
+
+            int current = (int) stack.top();
+
+            int neighbor = adjacentVertexNotVisited(current);
+
+            if(neighbor == -1){
                 stack.pop();
-            else{
-                vertexList[index].setVisited(true); // lo marca
-                info+=vertexList[index].data+", "; //lo muestra
-                stack.push(index); //inserta la posicion
+            }else{
+                vertexList[neighbor].setVisited(true);
+                sb.append(vertexList[neighbor].data).append(", ");
+                stack.push(neighbor);
             }
         }
-        return info;
+
+        return sb.toString();
     }
 
     @Override
     public String bfs() throws GraphException, QueueException, ListException {
-        setVisited(false);//marca todos los vertices como no visitados
-        // inicia en el vertice 0
-        String info =vertexList[0].data+", ";
-        vertexList[0].setVisited(true); // lo marca
+
+        if(isEmpty())
+            throw new GraphException("Adjacency List Graph is Empty");
+
+        setVisited(false);
+
+        StringBuilder sb = new StringBuilder();
+
         queue.clear();
-        queue.enQueue(0); // encola el elemento
-        int v2;
+
+        vertexList[0].setVisited(true);
+        sb.append(vertexList[0].data).append(", ");
+
+        queue.enQueue(0);
+
         while(!queue.isEmpty()){
-            int v1 = (int) queue.deQueue(); // remueve el vertice de la cola
-            // hasta que no tenga vecinos sin visitar
-            while((v2=adjacentVertexNotVisited(v1)) != -1 ){
-                // obtiene uno
-                vertexList[v2].setVisited(true); // lo marca
-                info+=vertexList[v2].data+", "; //lo muestra
-                queue.enQueue(v2); // lo encola
+
+            int current = (int) queue.deQueue();
+
+            Node<T> aux = vertexList[current].headNode;
+
+            while(aux != null){
+
+                int neighbor = indexOf(aux.data);
+
+                if(neighbor != -1 && !vertexList[neighbor].isVisited()){
+
+                    vertexList[neighbor].setVisited(true);
+                    sb.append(vertexList[neighbor].data).append(", ");
+
+                    queue.enQueue(neighbor);
+                }
+
+                aux = aux.neighbor;
             }
         }
-        return info;
+
+        return sb.toString();
     }
 
     private void setVisited(boolean value) {
@@ -227,13 +259,117 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
         }//for
     }
 
-    private int adjacentVertexNotVisited(int element) {
+    private int adjacentVertexNotVisited(int indexVertex) throws ListException {
 
-        for (int i = 0; i < counter; i++) {
-           int data = Integer.parseInt( vertexList[i].data.toString());
-            if(!(data == element) && !vertexList[i].isVisited())
-                return i;//retorna la posicion del vertice adyacente no visitado
-        }//for i
+        Node<T> aux = vertexList[indexVertex].headNode;
+
+        while(aux != null){
+
+            int indexNeighbor = indexOf(aux.data);
+
+            if(indexNeighbor != -1 && !vertexList[indexNeighbor].isVisited()){
+                return indexNeighbor;
+            }
+
+            aux = aux.neighbor;
+        }
+
         return -1;
     }
+
+    /**
+     * Metodo que devuelve el grado del vertice del elemento dado, de un grafo dirgido grado de salida + grado de entrada
+     *
+     **/
+
+    public int getVertexDegree(T element) throws GraphException, ListException {
+
+        if (isEmpty()) throw new ListException("Adjacency List Graph is Empty");
+
+        if (!containsVertex(element)) throw new ListException("Adjacency List Graph Not Contains Vertex");
+
+        int degree = 0; //El va a devolver el grado del vertice
+
+        Vertex<T> vertex = getVertex(element);
+
+        if (!directed) {
+
+            Node<T> aux = vertex.headNode;
+
+            while (aux != null) {
+                degree++;
+                aux = aux.neighbor;
+            }
+
+        } else {
+
+            // Grado de salida
+            Node<T> aux = vertex.headNode;
+
+            while (aux != null) {
+                degree++;
+                aux = aux.neighbor;
+            }
+
+            // Grado de entrada
+            for (int i = 0; i < counter; i++) {
+
+                aux = vertexList[i].headNode;
+
+                while (aux != null) {
+
+                    if (equals(aux.data, element))
+                        degree++;
+
+                    aux = aux.neighbor;
+                }
+            }
+        }
+
+        return degree;
+    }
+
+    /**
+     *Metodo que devuelva el grado del grafo
+     **/
+    public int getGraphDegree() throws GraphException, ListException {
+
+        if (isEmpty()) throw new ListException("Adjacency List Graph is Empty");
+
+        int maxDegree = 0;
+
+        for (int i = 0; i < counter; i++) {
+
+            int degree = getVertexDegree(vertexList[i].data);
+
+            if (degree > maxDegree) maxDegree = degree;
+        }
+
+        return maxDegree;
+
+    }
+
+    /**
+     * Metodo que devuelva el número total de aristas existentes en el grafo
+     **/
+    public int totalEdges() throws GraphException, ListException {
+
+        if(isEmpty())
+            throw new GraphException("Adjacency List Graph is Empty");
+
+        int edges = 0;
+
+        for(int i = 0; i < counter; i++) {
+
+            Node<T> aux = vertexList[i].headNode;
+
+            while(aux != null) {
+                edges++;
+                aux = aux.neighbor;
+            }
+        }
+
+        return directed ? edges : edges / 2;
+    }
+
 }

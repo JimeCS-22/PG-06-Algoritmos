@@ -14,7 +14,7 @@ class LinkedGraphTest {
     @Test
     public void testLinkedGraph() {
         try {
-            LinkedGraph<Integer> graph = new LinkedGraph<>(false,5); //es no dirigido
+            LinkedGraph<Integer> graph = new LinkedGraph<>(false); //es no dirigido
             for (int i = 1; i <= 5; i++)
                 graph.addVertex(i);
 
