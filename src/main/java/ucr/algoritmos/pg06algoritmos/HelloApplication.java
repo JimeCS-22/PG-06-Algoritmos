@@ -1,4 +1,4 @@
-package ucr.algoritmos.pg05algoritmos;
+package ucr.algoritmos.pg06algoritmos;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,9 +16,9 @@ public class HelloApplication extends Application {
 
     private void star2(Stage stage) throws IOException {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("/ucr/algoritmos/main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1100, 720);
-        scene.getStylesheets().add(HelloApplication.class.getResource("styles.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/ucr/algoritmos/styles.css").toExternalForm());
         stage.setTitle("PG-06 IF-3001 Algoritmos y Estructuras de Datos");
         stage.setScene(scene);
         stage.show();
