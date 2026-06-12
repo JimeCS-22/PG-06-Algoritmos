@@ -2,12 +2,14 @@
 
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -21,20 +23,20 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg05algoritmos.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
     <top>
         <VBox prefHeight="62.0" prefWidth="1036.0" styleClass="header-bar" stylesheets="@styles.css" BorderPane.alignment="CENTER">
             <children>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="16.0" stylesheets="@styles.css">
                     <children>
-                        <Label prefHeight="51.0" prefWidth="229.0" styleClass="header-badge" stylesheets="@styles.css" text="PG-05">
+                        <Label prefHeight="51.0" prefWidth="229.0" styleClass="header-badge" stylesheets="@styles.css" text="PG-06">
                             <font>
                                 <Font size="18.0" />
                             </font>
                         </Label>
                         <VBox prefHeight="100.0" prefWidth="1013.0">
                             <children>
-                                <Label prefHeight="26.0" prefWidth="534.0" styleClass="header-title" stylesheets="@styles.css" text="Árboles Binarios Simples, BST y AVL en JavaFX">
+                                <Label prefHeight="25.0" prefWidth="581.0" styleClass="header-title" stylesheets="@styles.css" text="Grafos( matriz de adyacencia, lista de adyacencia, lista enlazada) en JavaFX">
                                     <font>
                                         <Font size="24.0" />
                                     </font>
@@ -55,65 +57,86 @@
         <TabPane fx:id="mainTabs" prefHeight="200.0" prefWidth="200.0" styleClass="main-tabs" stylesheets="@styles.css" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
 
-                <Tab text="Árbol Bnario Simple">
+                <Tab text="Matriz de Adyacencia">
                     <content>
-                        <SplitPane dividerPositions="0.3113482056256062" prefHeight="200.0" prefWidth="200.0">
+                        <SplitPane dividerPositions="0.2329325058184639" prefHeight="200.0" prefWidth="200.0">
                             <items>
-                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
+                                <VBox prefHeight="603.0" prefWidth="234.0" spacing="10.0" styleClass="panel">
                                     <children>
-                                        <Label styleClass="panel-title" text="ÁRBOL Binario Simple">
+                                        <Label styleClass="panel-title" text="Configuración Grafo">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>
                                         </Label>
-                                        <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="Inserción por niveles (BFS)">
+                                        <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="Número de vértices(2-12).">
                                             <font>
                                                 <Font size="30.0" />
                                             </font>
                                         </Label>
                                         <HBox>
                                             <children>
-                                                <Label styleClass="param-label" text="Valor (entero):" />
-                                                <TextField fx:id="txtValueBTree" />
+                                                <Label styleClass="param-label" />
+                                    <HBox prefHeight="24.0" prefWidth="245.0">
+                                       <children>
+                                                      <ComboBox fx:id="numVertex" prefHeight="23.0" prefWidth="234.0" />
+                                       </children>
+                                    </HBox>
                                             </children>
                                         </HBox>
-                                        <VBox prefHeight="111.0" prefWidth="290.0" spacing="5.0">
-                                            <children>
-                                                <Button fx:id="btnAddBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="291.0" styleClass="btn-primary" text="+ Insertar" />
-                                                <Button fx:id="btnRemoveBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="290.0" styleClass="btn-gray" text="🗑Eliminar" />
-                                                <Button fx:id="btnClearBTree" mnemonicParsing="false" prefHeight="32.0" prefWidth="289.0" styleClass="btn-ghost" text="Limpiar árbol" />
-                                            </children>
-                                        </VBox>
-                                        <Label styleClass="param-label" text="Recorridos" />
-                                        <HBox prefHeight="36.0" prefWidth="289.0" spacing="10.0">
-                                            <children>
-                                                <ComboBox fx:id="cbRecorridosBTree" prefHeight="27.0" prefWidth="195.0" />
-                                                <Button fx:id="btnPlayBTree" mnemonicParsing="false" prefHeight="30.0" prefWidth="51.0" styleClass="btn-primary" text="▶" />
-                                            </children>
-                                        </HBox>
-                                        <HBox fx:id="RecorridosBTree" prefHeight="61.0" prefWidth="289.0">
-                                            <children>
-                                                <Label fx:id="lblTours1"
-                                                       wrapText="true"
-                                                       prefWidth="280"/>
-                                            </children>
-                                        </HBox>
-                                        <Label fx:id="lblBTreeinfo" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Nodos: " textAlignment="CENTER" />
-                                        <Label fx:id="lblBTreeDelete" prefHeight="26.0" prefWidth="289.0" styleClass="axis-label" text="Eliminado:" textAlignment="CENTER" />
-                                        <Label text="Leyenda de colores" />
-                                        <VBox prefHeight="132.0" prefWidth="289.0" style="         -fx-control-inner-background: #0f172a;         -fx-background-color: #0f172a;         -fx-text-fill: white;         -fx-font-size: 14px;         -fx-font-family: 'Consolas';         -fx-border-color: #1e293b;         -fx-border-radius: 12;         -fx-background-radius: 12;         -fx-padding: 12;     " styleClass="amber-card">
-                                            <children>
-                                                <Label style="-fx-text-fill: #29A3E1; -fx-font-size: 14px;" text="● Raíz" />
-                                                <Label style="-fx-text-fill: #10C98A; -fx-font-size: 14px;" text="● Hojas" />
-                                                <Label style="-fx-text-fill: #274D7D; -fx-font-size: 14px;" text="● Nodo Interno" />
-                                            </children>
-                                        </VBox>
+                              <CheckBox fx:id="checkGrafo" mnemonicParsing="false" text="Grafo Dirigido" />
+                              <Label styleClass="stat-label" text="Aristas(formato: u-v, separadas por coma):" />
+                              <TextField fx:id="infoAristas" prefHeight="67.0" prefWidth="209.0" />
+                              <Label styleClass="stat-label" text="Ejemplo: 0-1 conecta el vertice 0 con el 1" />
+                              <VBox prefHeight="95.0" prefWidth="209.0">
+                                 <children>
+                                    <Button fx:id="generateGrafo" mnemonicParsing="false" prefHeight="30.0" prefWidth="209.0" styleClass="btn-primary" text="▶ Generar grafo" />
+                                    <Button fx:id="loadExamples" mnemonicParsing="false" prefHeight="22.0" prefWidth="211.0" styleClass="btn-accent" text="⭐Cargar Ejemplo (CR)" />
+                                    <Button fx:id="Clean" mnemonicParsing="false" prefHeight="31.0" prefWidth="209.0" styleClass="btn-ghost" text="X Limpiar" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="param-label" text="⚙ Complejidades" />
+                              <VBox prefHeight="64.0" prefWidth="209.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #60a5fa;" text="Matriz de Adyacencia" />
+                                    <Label text="* Espacio: O(v^2" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="* existeAristaO(1)" />
+                                    <Label text="* vecinos: O(V)" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="axis-label" text="Vértices" />
+                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #4ade80;" text="0 = SJO          1=ALAJ      2=HER" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="3 = CAR        4=TURR     5=LIM" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="6 = GUA      7=PUN        8=PZE" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="9 = SCA" />
+                                 </children>
+                              </VBox>
                                     </children>
                                 </VBox>
                                 <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
                                     <children>
-                                        <Canvas fx:id="canvasBTree" height="566.0" width="677.0" />
                                         <HBox prefHeight="35.0" prefWidth="548.0" />
+                              <SplitPane dividerPositions="0.5929250263991551" prefHeight="634.0" prefWidth="759.0">
+                                <items>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Visualización del grafo" />
+                                          <Canvas fx:id="canvasGrafoMatriz" height="370.0" layoutX="14.0" layoutY="49.0" width="406.0" />
+                                          <Label fx:id="spaceInfo" layoutX="14.0" layoutY="447.0" text="Espacio:" />
+                                       </children>
+                                    </AnchorPane>
+                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="560.0" prefWidth="442.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Tabla de Matriz M[V-V]" />
+                                          <Canvas fx:id="canvasMatriz" height="200.0" layoutX="21.0" layoutY="41.0" width="267.0" />
+                                          <Separator layoutY="271.0" prefHeight="2.0" prefWidth="306.0" />
+                                          <Label layoutX="14.0" layoutY="280.0" text="Información de la Estructura" />
+                                          <ListView fx:id="listViewInfoMatriz" layoutX="14.0" layoutY="309.0" prefHeight="248.0" prefWidth="278.0" />
+                                       </children>
+                                    </AnchorPane>
+                                </items>
+                              </SplitPane>
                                     </children>
                                 </VBox>
                             </items>
