@@ -71,7 +71,6 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
             if(equals(vertexList[i].data, element)) return vertexList[i];
         return null; //no existe el vértice
     }
-
     @Override
     public void addWeight(T a, T b, T weight) throws GraphException, ListException {
         super.addWeight(a, b, weight);

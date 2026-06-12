@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
     <top>
         <VBox prefHeight="62.0" prefWidth="1036.0" styleClass="header-bar" stylesheets="@styles.css" BorderPane.alignment="CENTER">
             <children>
@@ -92,9 +92,9 @@
                               <VBox prefHeight="64.0" prefWidth="209.0" style="-fx-background-color: #0f172a;">
                                  <children>
                                     <Label style="-fx-text-fill: #60a5fa;" text="Matriz de Adyacencia" />
-                                    <Label text="* Espacio: O(v^2" />
+                                    <Label prefHeight="17.0" prefWidth="108.0" text="* Espacio: O(v^2)" textFill="WHITE" />
                                     <Label style="-fx-text-fill: #4ade80;" text="* existeAristaO(1)" />
-                                    <Label text="* vecinos: O(V)" />
+                                    <Label text="* vecinos: O(V)" textFill="WHITE" />
                                  </children>
                               </VBox>
                               <Label styleClass="axis-label" text="Vértices" />
@@ -139,18 +139,86 @@
                 </Tab>
                 <Tab text="Lista de Adyacencia">
                     <content>
-                        <SplitPane prefHeight="200.0" prefWidth="200.0">
+                        <SplitPane dividerPositions="0.24733268671193018, 0.7720659553831232" prefHeight="200.0" prefWidth="200.0">
                             <items>
-                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
+                        <VBox prefHeight="593.0" prefWidth="256.0" spacing="10.0" styleClass="panel">
+                           <children>
+                              <Label styleClass="panel-title" text="Configuración Grafo">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="Número de vértices(2-12).">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <HBox>
+                                 <children>
+                                    <Label styleClass="param-label" />
+                                    <HBox prefHeight="24.0" prefWidth="245.0">
+                                       <children>
+                                          <ComboBox fx:id="numVertexAdj" prefHeight="23.0" prefWidth="234.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                              <CheckBox fx:id="checkGrafoAdj" mnemonicParsing="false" text="Grafo Dirigido" />
+                              <Label styleClass="stat-label" text="Aristas(formato: u-v, separadas por coma):" />
+                              <TextField fx:id="infoAristasAdj" prefHeight="67.0" prefWidth="209.0" />
+                              <Label styleClass="stat-label" text="Ejemplo: 0-1 conecta el vertice 0 con el 1" />
+                              <VBox prefHeight="95.0" prefWidth="209.0">
+                                 <children>
+                                    <Button fx:id="btnGenerateGrafoAdj" mnemonicParsing="false" prefHeight="30.0" prefWidth="209.0" styleClass="btn-primary" text="▶ Generar grafo" />
+                                    <Button fx:id="btnLoadExamplesAdj" mnemonicParsing="false" prefHeight="22.0" prefWidth="211.0" styleClass="btn-accent" text="⭐Cargar Ejemplo (CR)" />
+                                    <Button fx:id="btnCleanAdj" mnemonicParsing="false" prefHeight="31.0" prefWidth="209.0" styleClass="btn-ghost" text="X Limpiar" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="param-label" text="⚙ Complejidades" />
+                              <VBox prefHeight="64.0" prefWidth="209.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #60a5fa;" text="Lista de Adyacencia" />
+                                    <Label prefHeight="17.0" prefWidth="118.0" text="* Espacio: O (V+E)" textFill="WHITE" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="* existeArista: O(grado)" />
+                                    <Label text="* vecinos: O(1)" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="axis-label" text="Vértices" />
+                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #4ade80;" text="0 = SJO          1=ALAJ      2=HER" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="3 = CAR        4=TURR     5=LIM" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="6 = GUA      7=PUN        8=PZE" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="9 = SCA" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                                <VBox prefHeight="593.0" prefWidth="565.0" spacing="10.0" styleClass="panel">
                                     <children>
                                         <HBox prefHeight="32.0" prefWidth="481.0">
                                             <children>
-                                                <HBox prefHeight="100.0" prefWidth="200.0" />
+                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <Label text="Visualización del grafo" />
+                                       </children></HBox>
                                             </children>
                                         </HBox>
-                                        <HBox prefHeight="17.0" prefWidth="419.0" spacing="10.0" />
+                              <Canvas fx:id="canvasAdj" height="383.0" width="513.0" />
+                              <Label fx:id="lblGraphInfo" prefHeight="100.0" prefWidth="511.0" text="Espacio:" />
                                     </children>
                                 </VBox>
+                        <VBox prefHeight="593.0" prefWidth="297.0" spacing="10.0" styleClass="panel">
+                           <children>
+                              <Label prefHeight="14.0" prefWidth="196.0" styleClass="axis-label" text="Estructura: ArrayList&lt;List&lt;Integer&gt;&gt;">
+                                 <font>
+                                    <Font size="1.0" />
+                                 </font>
+                              </Label>
+                              <VBox prefHeight="95.0" prefWidth="209.0" />
+                              <ListView fx:id="listViewInfoAdj" prefHeight="664.0" prefWidth="199.0" />
+                           </children>
+                        </VBox>
                             </items>
                         </SplitPane>
                     </content>
