@@ -121,7 +121,7 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
         remove(element); //eliminamos el vertice del grafo
         //buscamos el rastro del vértice en las listas enlazadas de vecinos de los otros vértices
         int len = size();
-        for (int i = 0; i < len; i++) {
+        for (int i = 1; i <= len; i++) {
             Node<T> node = getNodeByIndex(i);
             removeNeighbor(node, element);
         }
@@ -129,18 +129,18 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     private void removeNeighbor(Node<T> headNode, T element) throws ListException {
         if(headNode == null)throw new ListException("Linked List in Graph is Empty");
         //Caso 1: el elemento a suprimir es el primero
-        if (equals(headNode.neighbor.data,element)) {
-            headNode = headNode.neighbor.neighbor; //queda apuntando al sgte nodo vecino
+        if ( headNode.neighbor != null && equals(headNode.neighbor.data,element)) {
+            headNode.neighbor = headNode.neighbor.neighbor; //queda apuntando al sgte nodo vecino
+            return;
             //caso 2.El elemento a suprimir puede estar en medio o al final de la lista
         }else{
             Node<T> prev = headNode;
-            while(prev.neighbor != null){
+            while (prev.neighbor != null) {
                 if (equals(prev.neighbor.data, element)) {
-                    Node<T>removed = prev.neighbor;//es el nodo a eliminar
-                    //desenlaza el nodo
-                    prev.neighbor = removed.neighbor;
+                    prev.neighbor = prev.neighbor.neighbor; // elimina el nodo
+                    return; // termina tras eliminar
                 }
-                prev = prev.neighbor; //lo movemos al sgte vecino
+                prev = prev.neighbor;
             }
         }
     }

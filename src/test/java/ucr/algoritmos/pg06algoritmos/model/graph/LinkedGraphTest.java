@@ -77,4 +77,65 @@ class LinkedGraphTest {
             throw new RuntimeException(e);
         }
     }
+
+    @Test
+    public void testLinkedGraphOperations() throws GraphException {
+        LinkedGraph<String> graph = new LinkedGraph<>(false);
+        try {
+            // A) Cree e instancie un objeto tipo LinkedListGraph
+
+            String[] people = {"Alice", "Bob", "Charlie", "Diana", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy"};
+            String[] vertices = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+
+            // B) Para el grafo, agregue vértices
+            for (String v : vertices) {
+                graph.addVertex(v);
+            }
+
+            Random random = new Random();
+
+            // C) Agregue como pesos nombres de personas (aristas con pesos)
+            graph.addEdgeAndWeight("A", "B", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("A", "C", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("B", "D", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("C", "E", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("D", "F", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("E", "G", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("F", "H", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("G", "I", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("H", "J", people[random.nextInt(people.length)]);
+            graph.addEdgeAndWeight("I", "J", people[random.nextInt(people.length)]);
+
+            // D) Muestre el contenido del grafo por consola (vértices, aristas, pesos)
+            System.out.println("Grafo original:");
+            System.out.println(graph);
+
+            // E) Pruebe los recorridos dfs(), bfs() y muestre los resultados por consola
+            System.out.println("\n=== RECORRIDOS ===");
+            System.out.println("DFS: " + graph.dfs());
+            System.out.println("BFS: " + graph.bfs());
+
+            // F) Suprima los vértices F, H, J (también deberá suprimir aristas y pesos)
+            System.out.println("\n=== ELIMINANDO VÉRTICES F, H, J ===");
+            graph.removeVertex("F");
+            graph.removeVertex("H");
+            graph.removeVertex("J");
+
+            // G) Pruebe nuevamente los recorridos dfs(), bfs() y muestre los resultados por consola
+            System.out.println("\nGrafo después de la eliminación:");
+            System.out.println(graph);
+
+            System.out.println("\n=== RECORRIDOS DESPUÉS DE ELIMINAR ===");
+            System.out.println("DFS: " + graph.dfs());
+            System.out.println("BFS: " + graph.bfs());
+
+            // H) Muestre el contenido del grafo por consola (vértices, aristas, pesos)
+            System.out.println("\nContenido final del grafo:");
+            System.out.println(graph);
+
+        } catch (ListException | StackException | QueueException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

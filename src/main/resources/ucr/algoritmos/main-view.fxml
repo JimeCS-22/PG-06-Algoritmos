@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ScrollPane?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
     <top>
         <VBox prefHeight="62.0" prefWidth="1036.0" styleClass="header-bar" stylesheets="@styles.css" BorderPane.alignment="CENTER">
@@ -223,32 +224,98 @@
                         </SplitPane>
                     </content>
                 </Tab>
-                <!-- ... TAB 3: AVL ... -->
-                <Tab text="Lista">
-                    <content>
-                        <SplitPane dividerPositions="0.3113482056256062" prefHeight="200.0" prefWidth="200.0">
-                            <items>
-                                <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
-                                    <children>
-                                        <HBox prefHeight="35.0" prefWidth="548.0" />
-                                    </children>
-                                </VBox>
-                                <VBox prefHeight="665.0" prefWidth="459.0" spacing="10.0" styleClass="panel">
-                                    <children>
-                                        <HBox />
-                                        <VBox prefHeight="148.0" prefWidth="289.0" spacing="5.0" />
-                                        <HBox prefHeight="36.0" prefWidth="289.0" spacing="10.0" />
-                                        <HBox prefHeight="61.0" prefWidth="289.0">
-                                            <children>
-                                                <Label fx:id="lblTours" prefHeight="42.0" prefWidth="130.0" />
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-                            </items>
-                        </SplitPane>
-                    </content>
-                </Tab>
+            <Tab text="Lista Enlazada">
+               <content>
+                  <SplitPane dividerPositions="0.2329325058184639" prefHeight="200.0" prefWidth="200.0">
+                     <items>
+                        <VBox prefHeight="603.0" prefWidth="234.0" spacing="10.0" styleClass="panel">
+                           <children>
+                              <Label styleClass="panel-title" text="Configuración Grafo">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <Label prefHeight="13.0" prefWidth="211.0" styleClass="stat-label" text="Número de vértices(2-12).">
+                                 <font>
+                                    <Font size="30.0" />
+                                 </font>
+                              </Label>
+                              <HBox>
+                                 <children>
+                                    <Label styleClass="param-label" />
+                                    <HBox prefHeight="24.0" prefWidth="245.0">
+                                       <children>
+                                          <ComboBox fx:id="numVertexLinkedList" prefHeight="23.0" prefWidth="234.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                              <CheckBox fx:id="checkGrafoLinkedList" mnemonicParsing="false" text="Grafo Dirigido" />
+                              <Label styleClass="stat-label" text="Aristas(formato: u-v, separadas por coma):" />
+                              <TextField fx:id="infoAristasLinkedList" prefHeight="67.0" prefWidth="209.0" />
+                              <Label styleClass="stat-label" text="Ejemplo: 0-1 conecta el vertice 0 con el 1" />
+                              <VBox prefHeight="95.0" prefWidth="209.0">
+                                 <children>
+                                    <Button fx:id="generateGrafoLinkedList" mnemonicParsing="false" prefHeight="30.0" prefWidth="209.0" styleClass="btn-primary" text="▶ Generar grafo" />
+                                    <Button fx:id="loadExamplesLinkedList" mnemonicParsing="false" prefHeight="22.0" prefWidth="211.0" styleClass="btn-accent" text="⭐Cargar Ejemplo (CR)" />
+                                    <Button fx:id="CleanLinkedList" mnemonicParsing="false" prefHeight="31.0" prefWidth="209.0" styleClass="btn-ghost" text="X Limpiar" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="param-label" text="⚙ Complejidades" />
+                              <VBox prefHeight="64.0" prefWidth="209.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #60a5fa;" text="Lista Enlazada" />
+                                    <Label prefHeight="17.0" prefWidth="108.0" text="* Espacio: O(V+E)" textFill="WHITE" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="* Insertar: O(1)" />
+                                    <Label text="* Control de Memoria" textFill="WHITE" />
+                                 </children>
+                              </VBox>
+                              <Label styleClass="axis-label" text="Vértices" />
+                              <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #4ade80;" text="0 = SJO          1=ALAJ      2=HER" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="3 = CAR        4=TURR     5=LIM" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="6 = GUA      7=PUN        8=PZE" />
+                                    <Label style="-fx-text-fill: #4ade80;" text="9 = SCA" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
+                           <children>
+                              <HBox prefHeight="35.0" prefWidth="548.0" />
+                              <SplitPane dividerPositions="0.5929250263991551" prefHeight="634.0" prefWidth="759.0">
+                                 <items>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Visualización del grafo" />
+                                          <Canvas fx:id="canvasLinkedList" height="370.0" layoutX="14.0" layoutY="49.0" width="406.0" />
+                                          <Label fx:id="spaceInfoLinkedList" layoutX="14.0" layoutY="447.0" text="Espacio:" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="560.0" prefWidth="442.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Nodos Enlazados [dato | Next -&gt;]" />
+                                           <ScrollPane fx:id="scrollPaneLinkedList"
+                                                       prefHeight="220" prefWidth="300"
+                                                       fitToHeight="false" fitToWidth="false" >
+                                               <content>
+                                                   <Canvas fx:id="canvasNodesLinkedList" width="1000" height="400"/>
+                                               </content>
+                                           </ScrollPane>
+                                           <Separator layoutY="271.0" prefHeight="2.0" prefWidth="306.0" />
+                                          <Label layoutX="14.0" layoutY="280.0" text="Estructura Interna" />
+                                          <ListView fx:id="listViewInfoLinkedList" layoutX="14.0" layoutY="309.0" prefHeight="248.0" prefWidth="278.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </items>
+                              </SplitPane>
+                           </children>
+                        </VBox>
+                     </items>
+                  </SplitPane>
+               </content>
+            </Tab>
 
 
             </tabs>
