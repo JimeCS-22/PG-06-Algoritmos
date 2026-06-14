@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyListGraph;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyMatrixGraph;
+import ucr.algoritmos.pg06algoritmos.model.graph.GraphException;
 import ucr.algoritmos.pg06algoritmos.model.graph.LinkedGraph;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 
@@ -172,7 +173,20 @@ public class MainController implements Initializable {
         actualizarInformacion();
         drawGraphAnimated();
         drawMatrixVisual();
-        spaceInfo.setText("Espacio: O(V²) = " + (graph.n * graph.n));
+
+        try {
+            spaceInfo.setText(
+                    "Espacio: O(V²) = " + (graph.counter * graph.counter)
+                            + " celdas | Grado del grafo: " + graph.getGraphDegree()
+                            + " | Aristas: " + graph.totalEdges()
+                            + " | existeArista(): O(1)"
+                            + " | vecinos(): O(V)"
+                            + " | insertarVértice(): O(1)"
+                            + " | insertarArista(): O(1)"
+            );
+        } catch (GraphException | ListException e) {
+            spaceInfo.setText("No se pudo calcular la información del grafo.");
+        }
     }
 
     private void drawGraphAnimated() {
@@ -962,7 +976,5 @@ public class MainController implements Initializable {
         }
 
     }
-
-
 
 }
