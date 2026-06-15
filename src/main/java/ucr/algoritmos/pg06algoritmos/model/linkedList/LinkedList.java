@@ -298,7 +298,7 @@ public class LinkedList<T> implements List<T> {
         return a == null ? b == null : a.equals(b);
     }
 
-    private Node<T> getNode(int index) throws ListException {
+    public Node<T> getNode(int index) throws ListException {
         if (isEmpty())
             throw new ListException("Linked List is empty");
         if (index < 1 || index > size())

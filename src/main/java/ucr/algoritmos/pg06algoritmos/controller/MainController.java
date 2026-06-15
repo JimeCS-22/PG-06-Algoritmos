@@ -1069,9 +1069,6 @@ public class MainController implements Initializable {
         sliderVelo.setMax(100);
         sliderVelo.setValue(30);
 
-        sliderVelo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            DijkstraVisualizerHelper.updateTimelineSpeed(sliderVelo);
-        });
 
         handleLoadLetter();
 
