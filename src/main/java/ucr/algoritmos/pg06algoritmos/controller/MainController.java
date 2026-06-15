@@ -3,6 +3,7 @@ package ucr.algoritmos.pg06algoritmos.controller;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -103,8 +104,8 @@ public class MainController implements Initializable {
     private Label SmallRute;
     @javafx.fxml.FXML
     private Button btnEjecutar;
-    @javafx.fxml.FXML
-    private Canvas canvasLinkedList1;
+    @FXML
+    private Canvas canvaMST;
     @javafx.fxml.FXML
     private ComboBox vertexStart;
     @javafx.fxml.FXML
@@ -1076,9 +1077,42 @@ public class MainController implements Initializable {
 
     }
 
+    private void handleLoadLetter() {
+        boolean directed = checkGrafo.isSelected();
+        graph = new AdjacencyMatrixGraph<>(10, directed);
+        String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+
+        try {
+            for (String l : letters) {
+                graph.addVertex(l);
+            }
+            graph.addEdge("A", "B");
+            graph.addEdge("A", "C");
+            graph.addEdge("B", "C");
+            graph.addEdge("B", "D");
+            graph.addEdge("C", "E");
+            graph.addEdge("E", "D");
+            graph.addEdge("D", "F");
+            graph.addEdge("F", "G");
+            graph.addEdge("G", "H");
+            graph.addEdge("H", "I");
+            graph.addEdge("I", "J");
+
+
+            updateVertexCombos();
+
+            startDrawingAnimation();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error al configurar el grafo: " + e.getMessage());
+        }
+    }
+
+
     private void drawInitialGraph() {
         try {
-            DijkstraVisualizerHelper.drawGraph(canvasLinkedList1, graph, null);
+            DijkstraVisualizerHelper.drawGraph(canvaMST, graph, null);
         } catch (GraphException ex) {
             ex.printStackTrace();
         }
@@ -1086,6 +1120,7 @@ public class MainController implements Initializable {
 
     private void executeDijkstra(){
         try{
+
             if(graph==null || graph.isEmpty()){
                 showError("Primero genere o cargue un grafo.");
                 return;
@@ -1108,7 +1143,10 @@ public class MainController implements Initializable {
             dijkstra = new Dijkstra();
             dijkstra.execute(graph, startIndex);
             dijkstraSteps = dijkstra.getSteps();
-            currentStepIdx = 0;
+            currentStepIdx = 1;
+
+            System.out.println("STEP SIZE = " + dijkstraSteps.size());
+            System.out.println("GRAPH EMPTY? " + graph.isEmpty());
 
             showCurrentStep();
 
@@ -1120,14 +1158,14 @@ public class MainController implements Initializable {
 
     private void nextStep(){
         if(dijkstraSteps==null) return;
-        try {
+
             if(currentStepIdx < dijkstraSteps.size() - 1){
                 currentStepIdx++;
                 showCurrentStep();
             } else {
                 if(isRunningAuto) stopAutoRun();
             }
-        } catch (ListException e) { e.printStackTrace(); }
+
     }
 
     private void previousStep(){
@@ -1143,16 +1181,14 @@ public class MainController implements Initializable {
         DijkstraStep step = null;
         try {
             step = dijkstraSteps.get(currentStepIdx);
-            // Usar el Helper para actualizar todo: Log, Distancias, Canvas
             DijkstraVisualizerHelper.showCurrentStep(
                     step,
                     graph,
-                    ListStepsMST, // Tu ListView de log
-                    listViewMST,  // Tu ListView de distancias
-                    canvasLinkedList1 // Tu canvas
+                    ListStepsMST,
+                    listViewMST,
+                    canvaMST
             );
 
-            // Limpiar la ruta final por si estaba mostrada
             SmallRute.setText("");
 
         } catch (ListException | GraphException e) {
@@ -1196,7 +1232,7 @@ public class MainController implements Initializable {
             DijkstraStep finalStep = dijkstraSteps.get(dijkstraSteps.size() - 1);
             DijkstraVisualizerHelper.showRouteAndColor(
                     SmallRute,
-                    canvasLinkedList1,
+                    canvaMST,
                     graph,
                     finalStep,
                     targetNode
@@ -1209,23 +1245,19 @@ public class MainController implements Initializable {
     }
 
     private void updateVertexCombos() {
-        // 1. Limpiar para evitar duplicados
         vertexStart.getItems().clear();
         vertexDestiny.getItems().clear();
 
-        // 2. Si el grafo es nulo o no tiene vértices, simplemente regresamos
         if (graph == null || graph.counter == 0) {
             return;
         }
 
-        // 3. Llenar los ComboBoxes recorriendo los vértices actuales del grafo
         for (int i = 0; i < graph.counter; i++) {
             try {
                 String v = graph.getVertexByIndex(i).data;
                 vertexStart.getItems().add(v);
                 vertexDestiny.getItems().add(v);
             } catch (Exception e) {
-                // Manejo de error si el índice falla
                 System.err.println("Error obteniendo vértice: " + e.getMessage());
             }
         }
@@ -1246,16 +1278,14 @@ public class MainController implements Initializable {
     private void startAutoRun() throws ListException {
         isRunningAuto = true;
         btnAuto.setText("Detener");
-        btnPrev.setDisable(true); // Deshabilitar navegación manual
+        btnPrev.setDisable(true);
         btnNext.setDisable(true);
 
-        // Si ya estamos en el final, volvemos a empezar
         if(currentStepIdx >= dijkstraSteps.size() - 1) {
             currentStepIdx = 0;
             showCurrentStep();
         }
 
-        // Configurar Timeline con la velocidad actual y el callback 'nextStep'
         autoTimeline = DijkstraVisualizerHelper.getAutoTimeline(sliderVelo, () -> nextStep());
         autoTimeline.play();
     }
@@ -1271,37 +1301,6 @@ public class MainController implements Initializable {
         }
     }
 
-    private void handleLoadLetter() {
-        boolean directed = checkGrafo.isSelected();
-        graph = new AdjacencyMatrixGraph<>(10, directed);
-        String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-
-        try {
-            for (String l : letters) {
-                graph.addVertex(l);
-            }
-            graph.addEdge("A", "B");
-            graph.addEdge("A", "C");
-            graph.addEdge("B", "C");
-            graph.addEdge("B", "D");
-            graph.addEdge("C", "E");
-            graph.addEdge("E", "D");
-            graph.addEdge("D", "F");
-            graph.addEdge("F", "G");
-            graph.addEdge("G", "H");
-            graph.addEdge("H", "I");
-            graph.addEdge("I", "J");
-
-
-            updateVertexCombos();
-
-            startDrawingAnimation();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error al configurar el grafo: " + e.getMessage());
-        }
-    }
 
 
 }

@@ -26,9 +26,7 @@ public class LinkedList<T> implements List<T> {
     }
 
     @Override
-    public int size() throws ListException {
-        if (isEmpty())
-            throw new ListException("Linked List is empty");
+    public int size() {
         int counter = 0;
         Node<T> aux = head;
         while (aux != null) {

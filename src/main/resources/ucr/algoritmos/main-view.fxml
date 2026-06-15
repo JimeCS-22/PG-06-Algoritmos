@@ -372,7 +372,8 @@
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="panel">
                                        <children>
                                           <Label layoutX="14.0" layoutY="14.0" text="Visualización del grafo" />
-                                          <Canvas fx:id="canvaMST" height="370.0" layoutX="14.0" layoutY="49.0" width="406.0" />
+                                           <Canvas fx:id="canvaMST" height="370.0" layoutX="14.0" layoutY="49.0"
+                                                   width="406.0"/>
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="560.0" prefWidth="442.0" styleClass="panel">
