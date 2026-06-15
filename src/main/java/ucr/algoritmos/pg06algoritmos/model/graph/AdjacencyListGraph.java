@@ -378,4 +378,25 @@ public class AdjacencyListGraph<T extends Comparable<T>> extends AdjacencyMatrix
         return directed ? edges : edges / 2;
     }
 
+    public int getWeight(T a, T b) throws GraphException, ListException{
+
+        Vertex<T> vertex = getVertex(a);
+
+        Node<T> aux = vertex.headNode;
+
+        while(aux!=null){
+
+            if(aux.data.equals(b)){
+
+                return ((Number)aux.weight).intValue();
+
+            }
+
+            aux=aux.neighbor;
+        }
+
+        return Integer.MAX_VALUE;
+
+    }
+
 }

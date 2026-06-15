@@ -1,6 +1,7 @@
 package ucr.algoritmos.pg06algoritmos.controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
@@ -8,11 +9,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import ucr.algoritmos.pg06algoritmos.model.MST.Dijkstra;
+import ucr.algoritmos.pg06algoritmos.model.MST.DijkstraStep;
 import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyListGraph;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyMatrixGraph;
 import ucr.algoritmos.pg06algoritmos.model.graph.GraphException;
 import ucr.algoritmos.pg06algoritmos.model.graph.LinkedGraph;
+import ucr.algoritmos.pg06algoritmos.model.linkedList.LinkedList;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 
 import java.net.URL;
@@ -90,11 +94,55 @@ public class MainController implements Initializable {
     private Button CleanLinkedList;
     private LinkedGraph<String> graphLinkedList;
 
+    //MST
+    @javafx.fxml.FXML
+    private ListView listViewMST;
+    @javafx.fxml.FXML
+    private ComboBox typeAlgo;
+    @javafx.fxml.FXML
+    private Label SmallRute;
+    @javafx.fxml.FXML
+    private Button btnEjecutar;
+    @javafx.fxml.FXML
+    private Canvas canvasLinkedList1;
+    @javafx.fxml.FXML
+    private ComboBox vertexStart;
+    @javafx.fxml.FXML
+    private Button btnfindRute;
+    @javafx.fxml.FXML
+    private Button btnResert;
+    @javafx.fxml.FXML
+    private Slider sliderVelo;
+    @javafx.fxml.FXML
+    private ComboBox typeRepresentacion;
+    @javafx.fxml.FXML
+    private ListView ListStepsMST;
+    @javafx.fxml.FXML
+    private ScrollPane scrollPaneLinkedList;
+    @javafx.fxml.FXML
+    private Button btnPrev;
+    @javafx.fxml.FXML
+    private Button btnNext;
+    @javafx.fxml.FXML
+    private Button btnAuto;
+    @javafx.fxml.FXML
+    private ComboBox vertexDestiny;
+
+    //=================== DIJKSTRA ===================
+
+    private Dijkstra dijkstra;
+    private LinkedList<DijkstraStep> dijkstraSteps;
+    private int currentStepIdx = 0;
+    private Timeline autoTimeline;
+    private boolean isRunningAuto = false;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupMatrixGraph();
         setupAdjListGraph();
         setupLinkedGraph();
+        setupDijkstra();
+
     }
 
     // --------------Metódos para el tab Adjacency Matrix Graph - Jimena ---------------------
@@ -129,6 +177,8 @@ public class MainController implements Initializable {
                 }
             }
             startDrawingAnimation();
+
+            updateVertexCombos();
         } catch (Exception e) {
             showError("Error al generar el grafo: " + e.getMessage());
         }
@@ -976,5 +1026,282 @@ public class MainController implements Initializable {
         }
 
     }
+
+    //-----Dijkstra-----Jimena
+    private void setupDijkstra(){
+
+        typeAlgo.getItems().clear();
+
+        typeAlgo.getItems().addAll(
+
+                "Dijkstra"
+
+        );
+
+        typeAlgo.getSelectionModel().selectFirst();
+
+
+        typeRepresentacion.getItems().clear();
+
+        typeRepresentacion.getItems().addAll(
+
+                "Adjacency Matrix",
+                "Adjacency List",
+                "Linked Graph"
+
+        );
+
+        typeRepresentacion.getSelectionModel().selectFirst();
+
+        typeAlgo.getItems().addAll("Dijkstra (Shortest Path)");
+        typeAlgo.getSelectionModel().selectFirst();
+
+
+        btnEjecutar.setOnAction(e->executeDijkstra());
+        btnPrev.setOnAction(e->previousStep());
+        btnNext.setOnAction(e->nextStep());
+        btnAuto.setOnAction(e->autoRun());
+        btnResert.setOnAction(e->resetSimulation());
+        btnfindRute.setOnAction(e->findRoute());
+
+        sliderVelo.setMin(0);
+        sliderVelo.setMax(100);
+        sliderVelo.setValue(30);
+
+        sliderVelo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            DijkstraVisualizerHelper.updateTimelineSpeed(sliderVelo);
+        });
+
+        handleLoadLetter();
+
+    }
+
+    private void drawInitialGraph() {
+        try {
+            DijkstraVisualizerHelper.drawGraph(canvasLinkedList1, graph, null);
+        } catch (GraphException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void executeDijkstra(){
+        try{
+            if(graph==null || graph.isEmpty()){
+                showError("Primero genere o cargue un grafo.");
+                return;
+            }
+            if(vertexStart.getValue()==null){
+                showError("Seleccione un vértice inicial.");
+                return;
+            }
+
+            String startVertex = vertexStart.getValue().toString();
+            int startIndex = -1;
+            for(int i = 0; i < graph.counter; i++){
+                if(graph.getVertexByIndex(i).data.equals(startVertex)){
+                    startIndex = i;
+                    break;
+                }
+            }
+            if(startIndex == -1){ showError("Error interno: No se encontró el vértice."); return; }
+
+            dijkstra = new Dijkstra();
+            dijkstra.execute(graph, startIndex);
+            dijkstraSteps = dijkstra.getSteps();
+            currentStepIdx = 0;
+
+            showCurrentStep();
+
+        } catch(Exception ex){
+            ex.printStackTrace();
+            showError(ex.getMessage());
+        }
+    }
+
+    private void nextStep(){
+        if(dijkstraSteps==null) return;
+        try {
+            if(currentStepIdx < dijkstraSteps.size() - 1){
+                currentStepIdx++;
+                showCurrentStep();
+            } else {
+                if(isRunningAuto) stopAutoRun();
+            }
+        } catch (ListException e) { e.printStackTrace(); }
+    }
+
+    private void previousStep(){
+        if(dijkstraSteps==null) return;
+        if(isRunningAuto) stopAutoRun();
+        if(currentStepIdx > 0){
+            currentStepIdx--;
+            showCurrentStep();
+        }
+    }
+
+    private void showCurrentStep(){
+        DijkstraStep step = null;
+        try {
+            step = dijkstraSteps.get(currentStepIdx);
+            // Usar el Helper para actualizar todo: Log, Distancias, Canvas
+            DijkstraVisualizerHelper.showCurrentStep(
+                    step,
+                    graph,
+                    ListStepsMST, // Tu ListView de log
+                    listViewMST,  // Tu ListView de distancias
+                    canvasLinkedList1 // Tu canvas
+            );
+
+            // Limpiar la ruta final por si estaba mostrada
+            SmallRute.setText("");
+
+        } catch (ListException | GraphException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void resetSimulation(){
+        currentStepIdx = 0;
+        stopAutoRun();
+
+        ListStepsMST.getItems().clear();
+        listViewMST.getItems().clear();
+        SmallRute.setText("");
+
+        drawInitialGraph();
+    }
+
+    private void findRoute() {
+        if (dijkstraSteps == null) {
+            showError("Por favor, ejecute el algoritmo primero.");
+            return;
+        }
+        String startNode = vertexStart.getValue().toString();
+        String targetNode = vertexDestiny.getValue().toString();
+
+        try {
+            int targetIdx = -1;
+            for (int i = 0; i < graph.counter; i++) {
+                if (graph.getVertexByIndex(i).data.equals(targetNode)) {
+                    targetIdx = i;
+                    break;
+                }
+            }
+
+            if (targetIdx == -1) {
+                showError("Vértice destino no encontrado.");
+                return;
+            }
+
+            DijkstraStep finalStep = dijkstraSteps.get(dijkstraSteps.size() - 1);
+            DijkstraVisualizerHelper.showRouteAndColor(
+                    SmallRute,
+                    canvasLinkedList1,
+                    graph,
+                    finalStep,
+                    targetNode
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error calculando la ruta: " + e.getMessage());
+        }
+    }
+
+    private void updateVertexCombos() {
+        // 1. Limpiar para evitar duplicados
+        vertexStart.getItems().clear();
+        vertexDestiny.getItems().clear();
+
+        // 2. Si el grafo es nulo o no tiene vértices, simplemente regresamos
+        if (graph == null || graph.counter == 0) {
+            return;
+        }
+
+        // 3. Llenar los ComboBoxes recorriendo los vértices actuales del grafo
+        for (int i = 0; i < graph.counter; i++) {
+            try {
+                String v = graph.getVertexByIndex(i).data;
+                vertexStart.getItems().add(v);
+                vertexDestiny.getItems().add(v);
+            } catch (Exception e) {
+                // Manejo de error si el índice falla
+                System.err.println("Error obteniendo vértice: " + e.getMessage());
+            }
+        }
+    }
+    private void autoRun(){
+        if (dijkstraSteps == null) return;
+        if (isRunningAuto) {
+            stopAutoRun();
+        } else {
+            try {
+                startAutoRun();
+            } catch (ListException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void startAutoRun() throws ListException {
+        isRunningAuto = true;
+        btnAuto.setText("Detener");
+        btnPrev.setDisable(true); // Deshabilitar navegación manual
+        btnNext.setDisable(true);
+
+        // Si ya estamos en el final, volvemos a empezar
+        if(currentStepIdx >= dijkstraSteps.size() - 1) {
+            currentStepIdx = 0;
+            showCurrentStep();
+        }
+
+        // Configurar Timeline con la velocidad actual y el callback 'nextStep'
+        autoTimeline = DijkstraVisualizerHelper.getAutoTimeline(sliderVelo, () -> nextStep());
+        autoTimeline.play();
+    }
+
+    private void stopAutoRun() {
+        isRunningAuto = false;
+        btnAuto.setText("Auto ▶");
+        btnPrev.setDisable(false);
+        btnNext.setDisable(false);
+
+        if (autoTimeline != null) {
+            autoTimeline.stop();
+        }
+    }
+
+    private void handleLoadLetter() {
+        boolean directed = checkGrafo.isSelected();
+        graph = new AdjacencyMatrixGraph<>(10, directed);
+        String[] letters = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+
+        try {
+            for (String l : letters) {
+                graph.addVertex(l);
+            }
+            graph.addEdge("A", "B");
+            graph.addEdge("A", "C");
+            graph.addEdge("B", "C");
+            graph.addEdge("B", "D");
+            graph.addEdge("C", "E");
+            graph.addEdge("E", "D");
+            graph.addEdge("D", "F");
+            graph.addEdge("F", "G");
+            graph.addEdge("G", "H");
+            graph.addEdge("H", "I");
+            graph.addEdge("I", "J");
+
+
+            updateVertexCombos();
+
+            startDrawingAnimation();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error al configurar el grafo: " + e.getMessage());
+        }
+    }
+
 
 }

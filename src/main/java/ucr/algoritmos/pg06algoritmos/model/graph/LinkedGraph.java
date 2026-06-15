@@ -393,4 +393,25 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
     public int compareElement(T a, T b) {
         return a.compareTo(b);
     }
+
+    public int getWeight(T a,T b)throws GraphException,ListException{
+
+        Node<T> node=getNode(a);
+
+        Node<T> aux=node.neighbor;
+
+        while(aux!=null){
+
+            if(aux.data.equals(b)){
+
+                return ((Number)aux.weight).intValue();
+
+            }
+
+            aux=aux.neighbor;
+        }
+
+        return Integer.MAX_VALUE;
+
+    }
 }

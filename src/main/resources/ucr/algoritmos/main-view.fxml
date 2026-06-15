@@ -6,7 +6,9 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -17,8 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.ScrollPane?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="1031.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ucr.algoritmos.pg06algoritmos.controller.MainController">
     <top>
         <VBox prefHeight="62.0" prefWidth="1036.0" styleClass="header-bar" stylesheets="@styles.css" BorderPane.alignment="CENTER">
             <children>
@@ -296,16 +297,91 @@
                                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="560.0" prefWidth="442.0" styleClass="panel">
                                        <children>
                                           <Label layoutX="14.0" layoutY="14.0" text="Nodos Enlazados [dato | Next -&gt;]" />
-                                           <ScrollPane fx:id="scrollPaneLinkedList"
-                                                       prefHeight="220" prefWidth="300"
-                                                       fitToHeight="false" fitToWidth="false" >
+                                           <ScrollPane fx:id="scrollPaneLinkedList" fitToHeight="false" fitToWidth="false" prefHeight="220" prefWidth="300">
                                                <content>
-                                                   <Canvas fx:id="canvasNodesLinkedList" width="1000" height="400"/>
+                                                   <Canvas fx:id="canvasNodesLinkedList" height="400" width="1000" />
                                                </content>
                                            </ScrollPane>
                                            <Separator layoutY="271.0" prefHeight="2.0" prefWidth="306.0" />
                                           <Label layoutX="14.0" layoutY="280.0" text="Estructura Interna" />
                                           <ListView fx:id="listViewInfoLinkedList" layoutX="14.0" layoutY="309.0" prefHeight="248.0" prefWidth="278.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </items>
+                              </SplitPane>
+                           </children>
+                        </VBox>
+                     </items>
+                  </SplitPane>
+               </content>
+            </Tab>
+            <Tab text="MST(KRUSKAL, PRIM,DIJKSTRA)">
+               <content>
+                  <SplitPane dividerPositions="0.2329325058184639" prefHeight="200.0" prefWidth="200.0">
+                     <items>
+                        <VBox prefHeight="603.0" prefWidth="234.0" spacing="10.0" styleClass="panel">
+                           <children>
+                              <Label styleClass="panel-title" text="Algoritmo">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Label>
+                              <HBox>
+                                 <children>
+                                    <Label styleClass="param-label" />
+                                    <HBox prefHeight="24.0" prefWidth="245.0">
+                                       <children>
+                                          <ComboBox fx:id="typeAlgo" prefHeight="23.0" prefWidth="234.0" />
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </HBox>
+                              <Label styleClass="param-label" text="Representación" />
+                              <ComboBox fx:id="typeRepresentacion" prefHeight="23.0" prefWidth="209.0" />
+                              <Label styleClass="param-label" text="Vertice de Inicio" />
+                              <ComboBox fx:id="vertexStart" prefHeight="22.0" prefWidth="210.0" />
+                              <VBox prefHeight="123.0" prefWidth="209.0" style="-fx-background-color: #0f172a;">
+                                 <children>
+                                    <Label style="-fx-text-fill: #4ade80;" text="Vertice de destino" />
+                                    <ComboBox fx:id="vertexDestiny" prefHeight="22.0" prefWidth="207.0" />
+                                    <Button fx:id="btnfindRute" mnemonicParsing="false" prefHeight="34.0" prefWidth="203.0" text="Encontrar ruta" />
+                                    <Label style="-fx-text-fill: FFFFFF;" text="Ruta más corta" />
+                                    <Label fx:id="SmallRute" style="-fx-text-fill: FFFFFF;" text="..." />
+                                 </children>
+                              </VBox>
+                              <Separator prefHeight="2.0" prefWidth="246.0" />
+                              <Button fx:id="btnEjecutar" mnemonicParsing="false" prefHeight="22.0" prefWidth="218.0" styleClass="btn-primary" text="▶ Ejecutar" />
+                              <HBox prefHeight="32.0" prefWidth="209.0">
+                                 <children>
+                                    <Button fx:id="btnPrev" mnemonicParsing="false" prefHeight="22.0" prefWidth="90.0" text="⏮ Anterior" />
+                                    <Button fx:id="btnNext" mnemonicParsing="false" prefHeight="22.0" prefWidth="94.0" text="⏭ Siguiente" />
+                                 </children>
+                              </HBox>
+                              <Button fx:id="btnAuto" mnemonicParsing="false" prefHeight="22.0" prefWidth="211.0" styleClass="btn-accent" text="▶ Auto" />
+                              <Button fx:id="btnResert" mnemonicParsing="false" prefHeight="22.0" prefWidth="210.0" text="🔄Reiniciar" />
+                              <Separator prefHeight="3.0" prefWidth="222.0" />
+                              <Label prefHeight="14.0" prefWidth="112.0" text="Velocidad( ms / pasos)" />
+                              <Slider fx:id="sliderVelo" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="593.0" prefWidth="658.0" spacing="8.0" styleClass="panel">
+                           <children>
+                              <HBox prefHeight="35.0" prefWidth="548.0" />
+                              <SplitPane dividerPositions="0.5929250263991551" prefHeight="634.0" prefWidth="759.0">
+                                 <items>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" text="Visualización del grafo" />
+                                          <Canvas fx:id="canvaMST" height="370.0" layoutX="14.0" layoutY="49.0" width="406.0" />
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="560.0" prefWidth="442.0" styleClass="panel">
+                                       <children>
+                                          <Label layoutX="14.0" layoutY="14.0" styleClass="param-label" text="Log de Pasos" />
+                                          <Separator layoutY="271.0" prefHeight="2.0" prefWidth="306.0" />
+                                          <Label layoutX="14.0" layoutY="280.0" text="Estructura Interna" />
+                                          <ListView fx:id="listViewMST" layoutX="14.0" layoutY="309.0" prefHeight="248.0" prefWidth="278.0" />
+                                          <ListView fx:id="ListStepsMST" layoutX="37.0" layoutY="49.0" prefHeight="200.0" prefWidth="200.0" />
                                        </children>
                                     </AnchorPane>
                                  </items>
