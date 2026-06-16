@@ -152,6 +152,10 @@ public class MainController implements Initializable {
     private Label lblRepreSelected;
     private LinkedList<Kruskal.KruskalStep> kruskalSteps;
 
+    //-------------KRUSKAL-----------------------
+    private Kruskal kruskal;
+    private boolean isRunningAutoKruskal = false;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupMatrixGraph();
@@ -286,6 +290,9 @@ public class MainController implements Initializable {
                 gc.clearRect(0, 0, canvasGrafoMatriz.getWidth(), canvasGrafoMatriz.getHeight());
 
                 for (int i = 0; i < size; i++) {
+                        var v = graph.getVertexByIndex(i);
+                        if (v == null) continue;
+
                     gc.setFill(Color.web("#1e293b"));
                     gc.fillOval(positions[i][0] - NODE_RADIUS, positions[i][1] - NODE_RADIUS, NODE_RADIUS * 2, NODE_RADIUS * 2);
                     gc.setStroke(Color.web("#4ade80"));
@@ -521,7 +528,7 @@ public class MainController implements Initializable {
 
     private void startDrawingAnimationAdj() throws ListException {
         actualizarInformacionAdj();
-        drawGraphAnimatedAdj();
+        drawGraphAnimatedAdj(canvasAdj);
         drawMatrixVisualAdj();
         lblGraphInfo.setText("Espacio: O(V²) = "
                 + (graphAdj.counter + " + " + graphAdj.totalEdges()
@@ -529,9 +536,9 @@ public class MainController implements Initializable {
                 + "| existeArista: O (grado) | vecinos: O(1) | insertar: O(1)"));
     }
 
-    private void drawGraphAnimatedAdj() {
-        GraphicsContext gc = canvasAdj.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvasAdj.getWidth(), canvasAdj.getHeight());
+    private void drawGraphAnimatedAdj(Canvas canvas) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         double centerX = canvasAdj.getWidth() / 2;
         double centerY = canvasAdj.getHeight() / 2;
@@ -1329,112 +1336,208 @@ public class MainController implements Initializable {
                 btnNext.setOnAction(e -> nextStepKruskal());
                 btnAuto.setOnAction(e -> autoRunKruskal());
                 btnResert.setOnAction(e -> resetSimulationKruskal());
-                btnfindRute.setOnAction(e -> findRouteKruskal());
+
             } else {
                 vboxDijkstra.setVisible(true);
                 vboxDijkstra.setManaged(true);
                 leyendasKruskal.setVisible(false);
             }
 
-
-
         });
 
-
-
-            //handleLoadLetter();
     }
     private void executeKruskal() {
-        try{
 
-            if(graph==null || graph.isEmpty()){
-                showError("Primero genere o cargue un grafo.");
-                return;
-            }
-            if(vertexStart.getValue()==null){
-                showError("Seleccione un vértice inicial.");
-                return;
-            }
+        try {
 
-            String startVertex = vertexStart.getValue().toString();
-            int startIndex = -1;
-            for(int i = 0; i < graph.counter; i++){
-                if(graph.getVertexByIndex(i).data.equals(startVertex)){
-                    startIndex = i;
-                    break;
-                }
-            }
-            if(startIndex == -1){ showError("Error interno: No se encontró el vértice."); return; }
-
-            ArrayList<Kruskal.KruskalEdge> edgeList = new ArrayList<>();
-
-            edgeList.add(new Kruskal.KruskalEdge("A", "D", 5));
-            edgeList.add(new Kruskal.KruskalEdge("A", "B", 7));
-            edgeList.add(new Kruskal.KruskalEdge("B", "E", 7));
-            edgeList.add(new Kruskal.KruskalEdge("B", "D", 9));
-            edgeList.add(new Kruskal.KruskalEdge("B", "C", 8));
-            edgeList.add(new Kruskal.KruskalEdge("D", "F", 6));
-            edgeList.add(new Kruskal.KruskalEdge("D", "E", 15));
-            edgeList.add(new Kruskal.KruskalEdge("C", "E", 5));
-            edgeList.add(new Kruskal.KruskalEdge("E", "G", 9));
-
-            Kruskal kruskal = new Kruskal();
-            typeRepresentacion.valueProperty().addListener((obs, oldValue, newValue) -> {
-
-                if ("Adjacency Matrix".equals(newValue)) {
-                    graph = new AdjacencyMatrixGraph<>(10, false);
-                    try {
-                        kruskal.executeMatrixGraph(graph,edgeList );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                if ("Adjacency List".equals(newValue)) {
-                    AdjacencyListGraph graph = new AdjacencyListGraph<>(10, false);
-                    try {
-                        kruskal.executeListGraph(graph,edgeList );
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                if ("Linked Graph".equals(newValue)) {
-                    LinkedGraph<String> graphLinked = new LinkedGraph<>(false);
-                    try {
-                        kruskal.executeLinkedGraph(graphLinked, edgeList);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-
-
-
+            kruskal = new Kruskal();
             kruskalSteps = kruskal.getSteps();
+
             currentStepIdx = 1;
 
-            for (int i = 0; i < kruskalSteps.size(); i++) {
-                lblStatus.setText("Paso "+ kruskalSteps.getNodeByIndex(i) +"/"+kruskalSteps.size());
+            ArrayList<Kruskal.KruskalEdge> edgeList =
+                    createSampleGraph();
+
+            String representation =
+                    typeRepresentacion.getValue().toString();
+
+            if(representation.equals("Adjacency Matrix")){
+
+                graph = createMatrixGraph();
+                kruskal.executeMatrixGraph(
+                        (AdjacencyMatrixGraph<String>) graph,
+                        edgeList
+                );
+               KruskalVisualizerHelper.drawGraphMatrix(canvaMST,graph, kruskalSteps.get(currentStepIdx));
+
+
+            }else if(representation.equals("Adjacency List")){
+
+                AdjacencyListGraph<String> listGraph =
+                        createListGraph();
+                kruskal.executeListGraph(
+                        listGraph,
+                        edgeList
+                );
+                KruskalVisualizerHelper.drawGraphList(canvaMST,listGraph, kruskalSteps.get(currentStepIdx));
+            }else{
+
+                LinkedGraph<String> linkedGraph =
+                        createLinkedGraph();
+
+                kruskal.executeLinkedGraph(
+                        linkedGraph,
+                        edgeList
+                );
+                KruskalVisualizerHelper.drawGraphLinked(canvaMST,linkedGraph, kruskalSteps.get(currentStepIdx));
             }
 
-            lblRepreSelected.setText(typeRepresentacion.getValue().toString());
-            lblTotalWeight.setText("Peso acumulado: "+kruskal.getTotalWeight());
 
-            showCurrentStep();
 
-        } catch(Exception ex){
-            ex.printStackTrace();
-            showError(ex.getMessage());
+            lblTotalWeight.setText(
+                    "Peso acumulado: " +
+                            kruskal.getTotalWeight()
+            );
+
+            lblRepreSelected.setText(
+                    representation
+            );
+
+            showCurrentStepKrustal();
+
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+            showError(e.getMessage());
+
         }
     }
 
-    private void nextStepKruskal() {
-        if(kruskalSteps==null) return;
+    private ArrayList<Kruskal.KruskalEdge> createSampleGraph() {
 
-        if(currentStepIdx < kruskalSteps.size() - 1){
+        ArrayList<Kruskal.KruskalEdge> edgeList = new ArrayList<>();
+
+        edgeList.add(new Kruskal.KruskalEdge("A", "D", 5));
+        edgeList.add(new Kruskal.KruskalEdge("C", "E", 5));
+        edgeList.add(new Kruskal.KruskalEdge("D", "F", 6));
+        edgeList.add(new Kruskal.KruskalEdge("A", "B", 7));
+        edgeList.add(new Kruskal.KruskalEdge("B", "E", 7));
+        edgeList.add(new Kruskal.KruskalEdge("B", "C", 8));
+        edgeList.add(new Kruskal.KruskalEdge("E", "F", 8));
+        edgeList.add(new Kruskal.KruskalEdge("B", "D", 9));
+        edgeList.add(new Kruskal.KruskalEdge("E", "G", 9));
+        edgeList.add(new Kruskal.KruskalEdge("F", "G", 11));
+        edgeList.add(new Kruskal.KruskalEdge("D", "E", 15));
+
+        return edgeList;
+    }
+
+    //Matriz
+    private AdjacencyMatrixGraph<String> createMatrixGraph() throws Exception {
+
+        AdjacencyMatrixGraph<String> graph =
+                new AdjacencyMatrixGraph<>(20,false);
+
+        String[] vertices = {"A","B","C","D","E","F","G"};
+
+        for(String v : vertices){
+            graph.addVertex(v);
+        }
+
+        graph.addEdge("A","D");
+        graph.addEdge("C","E");
+        graph.addEdge("D","F");
+        graph.addEdge("A","B");
+        graph.addEdge("B","E");
+        graph.addEdge("B","C");
+        graph.addEdge("E","F");
+        graph.addEdge("B","D");
+        graph.addEdge("E","G");
+        graph.addEdge("F","G");
+        graph.addEdge("D","E");
+
+        return graph;
+    }
+   // Lista de Adyacencia
+    private AdjacencyListGraph<String> createListGraph() throws Exception {
+
+        AdjacencyListGraph<String> graph =
+                new AdjacencyListGraph<>(20,false);
+
+        String[] vertices = {"A","B","C","D","E","F","G"};
+
+        for(String v : vertices){
+            graph.addVertex(v);
+        }
+
+        graph.addEdge("A","D");
+        graph.addEdge("C","E");
+        graph.addEdge("D","F");
+        graph.addEdge("A","B");
+        graph.addEdge("B","E");
+        graph.addEdge("B","C");
+        graph.addEdge("E","F");
+        graph.addEdge("B","D");
+        graph.addEdge("E","G");
+        graph.addEdge("F","G");
+        graph.addEdge("D","E");
+
+        return graph;
+    }
+   // Lista Enlazada
+    private LinkedGraph<String> createLinkedGraph() throws Exception {
+
+        LinkedGraph<String> graph =
+                new LinkedGraph<>(false);
+
+        String[] vertices = {"A","B","C","D","E","F","G"};
+
+        for(String v : vertices){
+            graph.addVertex(v);
+        }
+        graph.addEdge("A","D");
+        graph.addEdge("C","E");
+        graph.addEdge("D","F");
+        graph.addEdge("A","B");
+        graph.addEdge("B","E");
+        graph.addEdge("B","C");
+        graph.addEdge("E","F");
+        graph.addEdge("B","D");
+        graph.addEdge("E","G");
+        graph.addEdge("F","G");
+        graph.addEdge("D","E");
+        return graph;
+    }
+
+    private void nextStepKruskal() {
+        if (kruskalSteps == null) return;
+
+        if (currentStepIdx < kruskalSteps.size() - 1) {
             currentStepIdx++;
-            showCurrentStep();
+            renderKruskalStep();
         } else {
-            if(isRunningAuto) stopAutoRun();
+            if (isRunningAutoKruskal) stopAutoRunK();
+        }
+    }
+    private void renderKruskalStep() {
+        try {
+            Kruskal.KruskalStep step = kruskalSteps.get(currentStepIdx);
+
+            String rep = typeRepresentacion.getValue().toString();
+
+            if (rep.equals("Adjacency Matrix")) {
+                KruskalVisualizerHelper.drawGraphMatrix(canvaMST, graph, step);
+            } else if (rep.equals("Adjacency List")) {
+                KruskalVisualizerHelper.drawGraphList(canvaMST, (AdjacencyListGraph<String>) graph, step);
+            } else {
+                KruskalVisualizerHelper.drawGraphLinked(canvaMST, createLinkedGraph(), step);
+            }
+
+            showCurrentStepKrustal();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     private void previousStepKruskal() {
@@ -1442,18 +1545,18 @@ public class MainController implements Initializable {
         if(isRunningAuto) stopAutoRun();
         if(currentStepIdx > 0){
             currentStepIdx--;
-            showCurrentStep();
+            showCurrentStepKrustal();
         }
     }
 
 
     private void autoRunKruskal() {
         if (kruskalSteps == null) return;
-        if (isRunningAuto) {
-            stopAutoRun();
+        if (isRunningAutoKruskal) {
+            stopAutoRunK();
         } else {
             try {
-                startAutoRun();
+                startAutoRunK();
             } catch (ListException e) {
                 throw new RuntimeException(e);
             }
@@ -1461,7 +1564,7 @@ public class MainController implements Initializable {
     }
     private void resetSimulationKruskal() {
         currentStepIdx = 0;
-        stopAutoRun();
+        stopAutoRunK();
 
         ListStepsMST.getItems().clear();
         listViewMST.getItems().clear();
@@ -1469,19 +1572,77 @@ public class MainController implements Initializable {
         lblStatus.setText("");
         lblRepreSelected.setText("");
         lblTotalWeight.setText("");
-
-        drawInitialGraph();
+        GraphicsContext gc = canvaMST.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvaMST.getWidth(), canvaMST.getHeight());
     }
     private void showCurrentStepKrustal(){
+        if(kruskalSteps == null)
+            return;
+        try{
 
-        ListStepsMST.setItems(kruskalSteps);
+            Kruskal.KruskalStep step =
+                    kruskalSteps.get(currentStepIdx);
+
+            KruskalVisualizerHelper.showCurrentStep(
+                    step,
+                    ListStepsMST,
+                    listViewMST
+
+            );
+
+            lblStatus.setText(
+                    "Paso "
+                            + currentStepIdx
+                            + "/"
+                            + kruskalSteps.size()
+            );
+
+            lblTotalWeight.setText(
+                    "Peso acumulado: "
+                            + step.getCurrentWeight()
+            );
+
+        }
+        catch(Exception ex){
+
+            ex.printStackTrace();
+        }
     }
 
-    private void findRouteKruskal() {
+
+    private void startAutoRunK() throws ListException {
+        isRunningAutoKruskal = true;
+        btnAuto.setText("Detener");
+        btnPrev.setDisable(true);
+        btnNext.setDisable(true);
+
+        if (currentStepIdx >= kruskalSteps.size() - 1) {
+            currentStepIdx = 0;
+        }
+
+        autoTimeline = KruskalVisualizerHelper.getAutoTimeline(sliderVelo, () -> nextStepKruskal());
+        autoTimeline.play();
     }
 
+    private void stopAutoRunK() {
+        isRunningAutoKruskal = false;
+        btnAuto.setText("Auto ▶");
+        btnPrev.setDisable(false);
+        btnNext.setDisable(false);
 
-
+        if (autoTimeline != null) {
+            autoTimeline.stop();
+        }
+    }
+    private void drawInitialGraphKruskal() {
+        try {
+            KruskalVisualizerHelper.drawGraphMatrix(canvaMST, graph, null);
+        } catch (GraphException ex) {
+            ex.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 
