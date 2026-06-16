@@ -414,4 +414,15 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
         return Integer.MAX_VALUE;
 
     }
+
+    public Node<T> getVertexByIndex(int index) throws ListException {
+
+        if(isEmpty())
+            throw new ListException("Linked Graph is Empty");
+
+        if(index < 0 || index >= size())
+            throw new ListException("Invalid Vertex Index");
+
+        return getNodeByIndex(index + 1);
+    }
 }

@@ -173,4 +173,10 @@ public class AVL <T extends Comparable<T>> extends BST<T>{
         return isBalanced(node.left)
                 && isBalanced(node.right);
     }
+    //String printNodesWithChildren (): devuelve un String con todos los nodos del
+    //árbol que tienen hijos (uno o dos hijos), junto con sus hijos.
+    private String printNodesWithChildren (){
+        return "";
+    }
+
 }

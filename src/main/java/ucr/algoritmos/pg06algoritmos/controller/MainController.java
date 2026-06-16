@@ -8,10 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import ucr.algoritmos.pg06algoritmos.model.MST.Dijkstra;
 import ucr.algoritmos.pg06algoritmos.model.MST.DijkstraStep;
+import ucr.algoritmos.pg06algoritmos.model.MST.Kruskal;
 import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyListGraph;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyMatrixGraph;
@@ -21,6 +23,8 @@ import ucr.algoritmos.pg06algoritmos.model.linkedList.LinkedList;
 import ucr.algoritmos.pg06algoritmos.model.linkedList.ListException;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -99,7 +103,7 @@ public class MainController implements Initializable {
     @javafx.fxml.FXML
     private ListView listViewMST;
     @javafx.fxml.FXML
-    private ComboBox typeAlgo;
+    private ComboBox<String> typeAlgo;
     @javafx.fxml.FXML
     private Label SmallRute;
     @javafx.fxml.FXML
@@ -107,7 +111,7 @@ public class MainController implements Initializable {
     @FXML
     private Canvas canvaMST;
     @javafx.fxml.FXML
-    private ComboBox vertexStart;
+    private ComboBox<String> vertexStart;
     @javafx.fxml.FXML
     private Button btnfindRute;
     @javafx.fxml.FXML
@@ -136,6 +140,17 @@ public class MainController implements Initializable {
     private int currentStepIdx = 0;
     private Timeline autoTimeline;
     private boolean isRunningAuto = false;
+    @FXML
+    private Label lblStatus;
+    @FXML
+    private VBox leyendasKruskal;
+    @FXML
+    private Label lblTotalWeight;
+    @FXML
+    private VBox vboxDijkstra;
+    @FXML
+    private Label lblRepreSelected;
+    private LinkedList<Kruskal.KruskalStep> kruskalSteps;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -143,8 +158,10 @@ public class MainController implements Initializable {
         setupAdjListGraph();
         setupLinkedGraph();
         setupDijkstra();
-
+        setupKruskal();
     }
+
+
 
     // --------------Metódos para el tab Adjacency Matrix Graph - Jimena ---------------------
     private void setupMatrixGraph() {
@@ -667,8 +684,6 @@ public class MainController implements Initializable {
     }
 
 
-
-
     /*
     --------------Metódos para el tab Linked List - Alexander------------------------
     */
@@ -1035,7 +1050,7 @@ public class MainController implements Initializable {
 
         typeAlgo.getItems().addAll(
 
-                "Dijkstra"
+                "Dijkstra","Dijkstra (Shortest Path)", "Kruskal(MST)", "Prim"
 
         );
 
@@ -1054,7 +1069,6 @@ public class MainController implements Initializable {
 
         typeRepresentacion.getSelectionModel().selectFirst();
 
-        typeAlgo.getItems().addAll("Dijkstra (Shortest Path)");
         typeAlgo.getSelectionModel().selectFirst();
 
 
@@ -1071,7 +1085,9 @@ public class MainController implements Initializable {
 
 
         handleLoadLetter();
-
+        vboxDijkstra.setVisible(true);
+        vboxDijkstra.setManaged(true);
+        leyendasKruskal.setVisible(false);
     }
 
     private void handleLoadLetter() {
@@ -1297,6 +1313,181 @@ public class MainController implements Initializable {
             autoTimeline.stop();
         }
     }
+
+    //-----Kruskal -----Camila
+    private void setupKruskal() {
+
+        typeAlgo.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+            if ("Kruskal(MST)".equals(newValue)) {
+                vertexStart.getItems().addAll("A", "B", "C", "D", "E", "F", "G");
+                vboxDijkstra.setVisible(false);
+                vboxDijkstra.setManaged(false);
+                leyendasKruskal.setVisible(true);
+                btnEjecutar.setOnAction(e -> executeKruskal());
+                btnPrev.setOnAction(e -> previousStepKruskal());
+                btnNext.setOnAction(e -> nextStepKruskal());
+                btnAuto.setOnAction(e -> autoRunKruskal());
+                btnResert.setOnAction(e -> resetSimulationKruskal());
+                btnfindRute.setOnAction(e -> findRouteKruskal());
+            } else {
+                vboxDijkstra.setVisible(true);
+                vboxDijkstra.setManaged(true);
+                leyendasKruskal.setVisible(false);
+            }
+
+
+
+        });
+
+
+
+            //handleLoadLetter();
+    }
+    private void executeKruskal() {
+        try{
+
+            if(graph==null || graph.isEmpty()){
+                showError("Primero genere o cargue un grafo.");
+                return;
+            }
+            if(vertexStart.getValue()==null){
+                showError("Seleccione un vértice inicial.");
+                return;
+            }
+
+            String startVertex = vertexStart.getValue().toString();
+            int startIndex = -1;
+            for(int i = 0; i < graph.counter; i++){
+                if(graph.getVertexByIndex(i).data.equals(startVertex)){
+                    startIndex = i;
+                    break;
+                }
+            }
+            if(startIndex == -1){ showError("Error interno: No se encontró el vértice."); return; }
+
+            ArrayList<Kruskal.KruskalEdge> edgeList = new ArrayList<>();
+
+            edgeList.add(new Kruskal.KruskalEdge("A", "D", 5));
+            edgeList.add(new Kruskal.KruskalEdge("A", "B", 7));
+            edgeList.add(new Kruskal.KruskalEdge("B", "E", 7));
+            edgeList.add(new Kruskal.KruskalEdge("B", "D", 9));
+            edgeList.add(new Kruskal.KruskalEdge("B", "C", 8));
+            edgeList.add(new Kruskal.KruskalEdge("D", "F", 6));
+            edgeList.add(new Kruskal.KruskalEdge("D", "E", 15));
+            edgeList.add(new Kruskal.KruskalEdge("C", "E", 5));
+            edgeList.add(new Kruskal.KruskalEdge("E", "G", 9));
+
+            Kruskal kruskal = new Kruskal();
+            typeRepresentacion.valueProperty().addListener((obs, oldValue, newValue) -> {
+
+                if ("Adjacency Matrix".equals(newValue)) {
+                    graph = new AdjacencyMatrixGraph<>(10, false);
+                    try {
+                        kruskal.executeMatrixGraph(graph,edgeList );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                if ("Adjacency List".equals(newValue)) {
+                    AdjacencyListGraph graph = new AdjacencyListGraph<>(10, false);
+                    try {
+                        kruskal.executeListGraph(graph,edgeList );
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                if ("Linked Graph".equals(newValue)) {
+                    LinkedGraph<String> graphLinked = new LinkedGraph<>(false);
+                    try {
+                        kruskal.executeLinkedGraph(graphLinked, edgeList);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+
+
+
+            kruskalSteps = kruskal.getSteps();
+            currentStepIdx = 1;
+
+            for (int i = 0; i < kruskalSteps.size(); i++) {
+                lblStatus.setText("Paso "+ kruskalSteps.getNodeByIndex(i) +"/"+kruskalSteps.size());
+            }
+
+            lblRepreSelected.setText(typeRepresentacion.getValue().toString());
+            lblTotalWeight.setText("Peso acumulado: "+kruskal.getTotalWeight());
+
+            showCurrentStep();
+
+        } catch(Exception ex){
+            ex.printStackTrace();
+            showError(ex.getMessage());
+        }
+    }
+
+    private void nextStepKruskal() {
+        if(kruskalSteps==null) return;
+
+        if(currentStepIdx < kruskalSteps.size() - 1){
+            currentStepIdx++;
+            showCurrentStep();
+        } else {
+            if(isRunningAuto) stopAutoRun();
+        }
+    }
+    private void previousStepKruskal() {
+        if(kruskalSteps==null) return;
+        if(isRunningAuto) stopAutoRun();
+        if(currentStepIdx > 0){
+            currentStepIdx--;
+            showCurrentStep();
+        }
+    }
+
+
+    private void autoRunKruskal() {
+        if (kruskalSteps == null) return;
+        if (isRunningAuto) {
+            stopAutoRun();
+        } else {
+            try {
+                startAutoRun();
+            } catch (ListException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+    private void resetSimulationKruskal() {
+        currentStepIdx = 0;
+        stopAutoRun();
+
+        ListStepsMST.getItems().clear();
+        listViewMST.getItems().clear();
+        SmallRute.setText("");
+        lblStatus.setText("");
+        lblRepreSelected.setText("");
+        lblTotalWeight.setText("");
+
+        drawInitialGraph();
+    }
+    private void showCurrentStepKrustal(){
+
+        ListStepsMST.setItems(kruskalSteps);
+    }
+
+    private void findRouteKruskal() {
+    }
+
+
+
+
+
+
+
+
+
 
 
 

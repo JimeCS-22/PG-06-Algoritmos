@@ -8,6 +8,7 @@ public class Node<T> {
     public Node<T> prev;//apuntador al nodo siguiente
     public Integer priority;// 1-Alta,2-media y 3-baja
     public Node<T> neighbor;
+    public boolean visited;
 
     //Constructor sobrecargado No.3 utilizando con grafos de listas
     public Node(T element, Object weight) {
