@@ -402,16 +402,10 @@ public class LinkedGraph <T extends Comparable<T>> extends LinkedList<T> impleme
 
         while(aux!=null){
 
-            if(aux.data.equals(b)){
-
-                return ((Number)aux.weight).intValue();
-
-            }
-
-            aux=aux.neighbor;
-        }
-
-        return Integer.MAX_VALUE;
+            if(aux.weight instanceof String)
+                return Integer.parseInt((String)aux.weight);
+}
+            return ((Number)aux.weight).intValue();
 
     }
 

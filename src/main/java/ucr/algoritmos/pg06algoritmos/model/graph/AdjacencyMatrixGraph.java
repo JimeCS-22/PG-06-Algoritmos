@@ -386,14 +386,17 @@ public class AdjacencyMatrixGraph<T extends Comparable<T>> implements Graph<T> {
         return vertexList[index];
     }
 
-    public int getWeight(T a, T b) throws GraphException, ListException{
+    public int getWeight(T a, T b) throws GraphException, ListException {
 
         if(!containsEdge(a,b))
             return Integer.MAX_VALUE;
 
         Object value = adjancencyMatrix[indexOf(a)][indexOf(b)];
 
-        return ((Number)value).intValue();
+        if(value instanceof String){
+            return Integer.parseInt((String)value);
+        }
 
+        return ((Number)value).intValue();
     }
 }

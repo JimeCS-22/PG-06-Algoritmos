@@ -11,9 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import ucr.algoritmos.pg06algoritmos.model.MST.Dijkstra;
-import ucr.algoritmos.pg06algoritmos.model.MST.DijkstraStep;
-import ucr.algoritmos.pg06algoritmos.model.MST.Kruskal;
+import ucr.algoritmos.pg06algoritmos.model.MST.*;
 import ucr.algoritmos.pg06algoritmos.model.Node;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyListGraph;
 import ucr.algoritmos.pg06algoritmos.model.graph.AdjacencyMatrixGraph;
@@ -156,6 +154,14 @@ public class MainController implements Initializable {
     private Kruskal kruskal;
     private boolean isRunningAutoKruskal = false;
 
+    //-------------PRIM-----------------------
+    private Prim prim;
+    private LinkedList<PrimStep> primSteps;
+    private boolean isRunningAutoPrim = false;
+    private AdjacencyMatrixGraph<String> graphPrim;
+    private AdjacencyListGraph<String> graphPrimList;
+    private LinkedGraph<String> graphPrimLinked;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupMatrixGraph();
@@ -163,6 +169,7 @@ public class MainController implements Initializable {
         setupLinkedGraph();
         setupDijkstra();
         setupKruskal();
+        setupPrim();
     }
 
 
@@ -1644,12 +1651,273 @@ public class MainController implements Initializable {
         }
     }
 
+    //-----Prim-----Alexander
+    private void setupPrim() {
+        typeAlgo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if ("Prim".equals(newValue)) {
+                vertexStart.getItems().clear();
+                vertexStart.getItems().addAll("A", "B", "C", "D", "E", "F", "G");
+                vboxDijkstra.setVisible(false);
+                vboxDijkstra.setManaged(false);
+                leyendasKruskal.setVisible(true);
+                btnEjecutar.setOnAction(e -> executePrim());
+                btnPrev.setOnAction(e -> previousStepPrim());
+                btnNext.setOnAction(e -> nextStepPrim());
+                btnAuto.setOnAction(e -> autoRunPrim());
+                btnResert.setOnAction(e -> resetSimulationPrim());
+            }
+        });
+    }
 
+    private void executePrim() {
 
+        try {
 
+            prim = new Prim();
 
+            // SIEMPRE crear la matriz para información textual
+            graphPrim = createMatrixGraphPrim();
 
+            String representation =
+                    typeRepresentacion.getValue().toString();
 
+            if (representation.equals("Adjacency Matrix")) {
 
+                prim.executeMatrixGraph(graphPrim, 0);
+
+            } else if (representation.equals("Adjacency List")) {
+
+                graphPrimList = createListGraphPrim();
+                prim.executeListGraph(graphPrimList, 0);
+
+            } else {
+
+                graphPrimLinked = createLinkedGraphPrim();
+                prim.executeLinkedGraph(graphPrimLinked, 0);
+            }
+
+            primSteps = prim.getSteps();
+            currentStepIdx = 0;
+
+            renderPrimStep();
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            showError(e.getMessage());
+        }
+    }
+
+    private void nextStepPrim() {
+        if (primSteps == null) return;
+
+        if (currentStepIdx < primSteps.size() - 1) {
+            currentStepIdx++;
+            renderPrimStep();
+        } else {
+            if (isRunningAutoPrim) stopAutoRunPrim();
+        }
+    }
+
+    private void previousStepPrim() {
+        if (primSteps == null) return;
+        if (isRunningAutoPrim) stopAutoRunPrim();
+        if (currentStepIdx > 0) {
+            currentStepIdx--;
+            renderPrimStep();
+        }
+    }
+
+    private void renderPrimStep() {
+
+        try {
+
+            if (primSteps == null) return;
+
+            if (primSteps.size() == 0) {
+                System.out.println("Prim no generó pasos");
+                return;
+            }
+
+            if (currentStepIdx < 0 || currentStepIdx >= primSteps.size()) {
+                System.out.println("Índice inválido: " + currentStepIdx);
+                return;
+            }
+
+            PrimStep step = primSteps.get(currentStepIdx + 1);
+
+            String rep = typeRepresentacion.getValue().toString();
+
+            if (rep.equals("Adjacency Matrix")) {
+                PrimVisualizerHelper.drawGraphMatrix(canvaMST, graphPrim, step);
+            } else if (rep.equals("Adjacency List")) {
+                PrimVisualizerHelper.drawGraphList(canvaMST, graphPrimList, step);
+            } else {
+                PrimVisualizerHelper.drawGraphLinked(canvaMST, graphPrimLinked, step);
+            }
+
+            showCurrentStepPrim();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showCurrentStepPrim() {
+        if (primSteps == null) return;
+        try {
+
+            PrimStep step = primSteps.get(currentStepIdx + 1);
+            String rep = typeRepresentacion.getValue().toString();
+
+            AdjacencyMatrixGraph<String> g = null;
+            if (rep.equals("Adjacency Matrix")) {
+                g = graphPrim;
+            }
+
+            PrimVisualizerHelper.showCurrentStep(step, g, ListStepsMST, listViewMST);
+
+            lblStatus.setText("Paso " + currentStepIdx + "/" + primSteps.size());
+            lblTotalWeight.setText("Peso acumulado: " + step.totalWeight);
+
+            if (primSteps == null || primSteps.isEmpty()) {
+                return;
+            }
+
+            if (currentStepIdx + 1 > primSteps.size()) {
+                System.out.println(
+                        "Índice inválido: " +
+                                currentStepIdx +
+                                " tamaño: " +
+                                primSteps.size()
+                );
+                return;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void autoRunPrim() {
+        if (primSteps == null) return;
+        if (isRunningAutoPrim) {
+            stopAutoRunPrim();
+        } else {
+            try {
+                startAutoRunPrim();
+            } catch (ListException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void startAutoRunPrim() throws ListException {
+        isRunningAutoPrim = true;
+        btnAuto.setText("Detener");
+        btnPrev.setDisable(true);
+        btnNext.setDisable(true);
+
+        if (currentStepIdx >= primSteps.size() - 1) {
+            currentStepIdx = 0;
+        }
+
+        autoTimeline = PrimVisualizerHelper.getAutoTimeline(sliderVelo, () -> nextStepPrim());
+        autoTimeline.play();
+    }
+
+    private void stopAutoRunPrim() {
+        isRunningAutoPrim = false;
+        btnAuto.setText("Auto ▶");
+        btnPrev.setDisable(false);
+        btnNext.setDisable(false);
+
+        if (autoTimeline != null) {
+            autoTimeline.stop();
+        }
+    }
+
+    private void resetSimulationPrim() {
+        currentStepIdx = 0;
+        stopAutoRunPrim();
+
+        ListStepsMST.getItems().clear();
+        listViewMST.getItems().clear();
+        SmallRute.setText("");
+        lblStatus.setText("");
+        lblRepreSelected.setText("");
+        lblTotalWeight.setText("");
+        GraphicsContext gc = canvaMST.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvaMST.getWidth(), canvaMST.getHeight());
+    }
+
+    // ========== GRAFOS PARA PRIM ==========
+    private AdjacencyMatrixGraph<String> createMatrixGraphPrim() throws Exception {
+        AdjacencyMatrixGraph<String> graph = new AdjacencyMatrixGraph<>(20, false);
+        String[] vertices = {"A", "B", "C", "D", "E", "F", "G"};
+
+        for (String v : vertices) {
+            graph.addVertex(v);
+        }
+
+        graph.addEdgeAndWeight("A", "B", "4");
+        graph.addEdgeAndWeight("A", "D", "2");
+        graph.addEdgeAndWeight("B", "C", "1");
+        graph.addEdgeAndWeight("B", "D", "5");
+        graph.addEdgeAndWeight("B", "E", "10");
+        graph.addEdgeAndWeight("C", "E", "3");
+        graph.addEdgeAndWeight("D", "E", "7");
+        graph.addEdgeAndWeight("D", "F", "6");
+        graph.addEdgeAndWeight("E", "F", "1");
+        graph.addEdgeAndWeight("E", "G", "2");
+        graph.addEdgeAndWeight("F", "G", "1");
+
+        return graph;
+    }
+
+    private AdjacencyListGraph<String> createListGraphPrim() throws Exception {
+        AdjacencyListGraph<String> graph = new AdjacencyListGraph<>(20, false);
+        String[] vertices = {"A", "B", "C", "D", "E", "F", "G"};
+
+        for (String v : vertices) {
+            graph.addVertex(v);
+        }
+
+        graph.addEdgeAndWeight("A", "B", "4");
+        graph.addEdgeAndWeight("A", "D", "2");
+        graph.addEdgeAndWeight("B", "C", "1");
+        graph.addEdgeAndWeight("B", "D", "5");
+        graph.addEdgeAndWeight("B", "E", "10");
+        graph.addEdgeAndWeight("C", "E", "3");
+        graph.addEdgeAndWeight("D", "E", "7");
+        graph.addEdgeAndWeight("D", "F", "6");
+        graph.addEdgeAndWeight("E", "F", "1");
+        graph.addEdgeAndWeight("E", "G", "2");
+        graph.addEdgeAndWeight("F", "G", "1");
+
+        return graph;
+    }
+
+    private LinkedGraph<String> createLinkedGraphPrim() throws Exception {
+        LinkedGraph<String> graph = new LinkedGraph<>(false);
+        String[] vertices = {"A", "B", "C", "D", "E", "F", "G"};
+
+        for (String v : vertices) {
+            graph.addVertex(v);
+        }
+
+        graph.addEdgeAndWeight("A", "B", "4");
+        graph.addEdgeAndWeight("A", "D", "2");
+        graph.addEdgeAndWeight("B", "C", "1");
+        graph.addEdgeAndWeight("B", "D", "5");
+        graph.addEdgeAndWeight("B", "E", "10");
+        graph.addEdgeAndWeight("C", "E", "3");
+        graph.addEdgeAndWeight("D", "E", "7");
+        graph.addEdgeAndWeight("D", "F", "6");
+        graph.addEdgeAndWeight("E", "F", "1");
+        graph.addEdgeAndWeight("E", "G", "2");
+        graph.addEdgeAndWeight("F", "G", "1");
+
+        return graph;
+    }
 
 }
